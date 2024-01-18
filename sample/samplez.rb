@@ -1,4 +1,5 @@
 require 'num4anova'
+require 'multicomp'
 require_relative('mymatcher')
 
 RSpec.describe Num4AnovaLib do
@@ -52,6 +53,48 @@ RSpec.describe Num4AnovaLib do
             expect(
                 oneWay.bartlet(xi, a)
             ).to eq false
+        end
+    end
+end
+
+RSpec.describe MultiCompLib do
+    let!(:a) { 0.05 }
+    describe MultiCompLib::ParametrixTestLib do
+        let!(:paraTest) { MultiCompLib::ParametrixTestLib.new }
+        it '#turkey_test' do
+            xi = [
+                [12.2, 18.8, 18.2],
+                [22.2, 20.5, 14.6],
+                [20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3],
+                [24.5, 21.2, 22.4],
+            ]
+            res = [
+                [false, false],
+                [false, false],
+            ]
+            expect(
+                paraTest.turkey_test(xi, a)
+            ).to is_array(res)
+        end
+        it '#bonferrono_test' do
+            xi = [
+                [12.2, 18.8, 18.2],
+                [22.2, 20.5, 14.6],
+                [20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3],
+                [24.5, 21.2, 22.4],
+            ]
+            res = [
+                [false, false, false, true, false],
+                [false, false, false, true, false],
+                [false, false, false, false, false],
+                [false, false, false, false, false],
+                [false, false, false, false, false],
+            ]
+            expect(
+                paraTest.bonferrono_test(xi, a)
+            ).to is_array(res)
         end
     end
 end
