@@ -5,7 +5,8 @@ require 'commons-math3-3.6.1.jar'
 
 java_import 'OneWayLayout'
 java_import 'java.util.HashMap'
-# 数値計算による分散分析を行う
+# 分散分析を行う
+#  (Apache commoms math3使用)
 module Num4AnovaLib
     # 一元配置の分散分析
     class OneWayLayoutLib
