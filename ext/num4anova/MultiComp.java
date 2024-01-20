@@ -2,6 +2,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
 
@@ -41,22 +42,30 @@ public class MultiComp {
             public double[][] calcTestStatistic(double[][] xi) {
                 n = xi.length;                  // a
                 m = xi[0].length;               // n
+                double[][] statistic = new double[n][n];
                 double[] mean = calcStdMean(xi);
-                double[][] means = calcMeanDiff(mean);
+                double ve = calcVe(xi);
 
-                return means;
+                for(int i = 0; i < n; i++) {
+                    for(int j = i; j < n; j++) {
+                        statistic[i][j] = 
+                            Math.abs(mean[i] - mean[j]) / Math.sqrt(ve / m);
+                    }
+                }
+  
+                return statistic;
 
             }
             public boolean[][] executeTest(double[][] statistic, double a) {
-                double v = n * (m - 1);
-                ChiSquaredDistribution chi2Dist = new ChiSquaredDistribution(n - 1);
-                double q = 
-                    chi2Dist.inverseCumulativeProbability(1.0 - a);
+                int v = n * (m - 1);
+                double q = qvalue(n, v, a);
+                boolean[][] ret = new boolean[n][n];
 
-                System.out.println("q:" + Math.sqrt(m * q));
-                boolean[][] ret = new boolean[2][2];
-                ret[0][0] = false;
-                ret[0][1] = true;
+                for(int i = 0; i < n; i++) {
+                    for(int j = i; j < n; j++) {
+                        ret[i][j] = (statistic[i][j]  >= q) ? true : false;
+                    }
+                }
                 return ret;
             }
 
@@ -91,16 +100,12 @@ public class MultiComp {
                 }
                 return sumSq / na;
             } 
-            private double[][] calcMeanDiff(double[] mean) {
-                int n = mean.length;
-                double[][] means = new double[n][n];
+            private double qvalue(int k, int v, double a) {
+                TDistribution tDist = new TDistribution(v - 1);
+                double t = 
+                    tDist.inverseCumulativeProbability(1.0 - a / 2.0);
 
-                for(int i = 0; i < n; i++) {
-                    for(int j = i; j < n; j++) {
-                        means[i][j] = Math.abs(mean[i] - mean[j]);
-                    }
-                }
-                return means;
+                return t * Math.sqrt(k- 1);
             }
         }
         // ボンフェロー法
