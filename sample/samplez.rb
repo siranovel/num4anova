@@ -70,8 +70,11 @@ RSpec.describe MultiCompLib do
                 [24.5, 21.2, 22.4],
             ]
             res = [
-                [false, false],
-                [false, false],
+                [false, false, false, true, false],
+                [false, false, false, true, false],
+                [false, false, false, false, false],
+                [false, false, false, false, false],
+                [false, false, false, false, false],
             ]
             expect(
                 paraTest.turkey_test(xi, a)
