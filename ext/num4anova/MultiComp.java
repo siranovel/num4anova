@@ -2,8 +2,6 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
 
 import org.apache.commons.math3.util.Combinations;
@@ -99,13 +97,56 @@ public class MultiComp {
                     stat.clear();
                 }
                 return sumSq / na;
-            } 
+            }
+            // スチューデント化された範囲のa点
+            // v=120
+            //   k=10  q= 4.5595 p2/a=0.016282   1/61.417516276
+            //   k=8   q= 4.3630 p2/a=0.025263   1/39.583580731
+            //   k=6   q= 4.0960 p2/a=0.044883   1/22.280150614
+            //   k=5   q= 3.9169 p2/a=0.065040   1/15.375153752
+            //   k=4   q= 3.6846 p2/a=0.103377   1/9.673331592
+            //   k=3   q= 3.3561 p2/a=0.192270   1/5.2010194
+            //   k=2   q= 2.8000 p2/a=0.500036   1/2
+            // v=14
+            //   k=10  q= 5.2534 p2/a=0.023091   1/43.306916115
+            //   k=8   q= 4.9903 p2/a=0.033394   1/29.945499191   
+            //   k=6   q= 4.6385 p2/a=0.054768   1/18.258837277   
+            //   k=5   q= 4.4066 p2/a=0.075883   1/13.178182202   
+            //   k=4   q= 4.1105 p2/a=0.114920   1/8.701705534
+            //   k=3   q= 3.7014 p2/a=0.202830   1/4.930237144
+            //   k=2   q= 3.0332 p2/a=0.499991   1/2.000036001   
+            // v=12
+            //   k=10  q= 5.3946 p2/a=0.024637   1/40.58935747
+            //   k=8   q= 5.1187 p2/a=0.035180   1/28.425241615   
+            //   k=6   q= 4.7502 p2/a=0.056858   1/17.587674558 
+            //   k=5   q= 4.5077 p2/a=0.078128   1/12.799508499
+            //   k=4   q= 4.1987 p2/a=0.117245   1/8.529148365 
+            //   k=3   q= 3.7729 p2/a=0.204923   1/4.879881712   
+            //   k=2   q= 3.0813 p2/a=0.500004   1/2
+            // v=10
+            //   k=10  q= 5.5984 p2/a=0.026922   1/37.144342917
+            //   k=8   q= 5.3042 p2/a=0.037799   1/26.455726342
+            //   k=6   q= 4.9128 p2/a=0.059822   1/16.716258233
+            //   k=5   q= 4.6543 p2/a=0.081351   1/12.292411894
+            //   k=4   q= 4.3266 p2/a=0.120575   1/8.293593199   
+            //   k=3   q= 3.8768 p2/a=0.207859   1/4.810953579
+            //   k=2   q= 3.1511 p2/a=0.499979   1/2
+            // v=9
+            //   k=10  q= 5.7384 p2/a=0.028519   1/35.06434307
+            //   k=8   q= 5.4312 p2/a=0.039639   1/25.22767981
+            //   k=6   q= 5.0235 p2/a=0.061950   1/16.14205004
+            //   k=5   q= 4.7554 p2/a=0.083549   1/11.969024165
+            //   k=4   q= 4.4149 p2/a=0.122828   1/8.141466115   
+            //   k=3   q= 3.9485 p2/a=0.209848   1/4.76535397
+            //   k=2   q= 3.1992 p2/a=0.499985   1/2
             private double qvalue(int k, int v, double a) {
-                TDistribution tDist = new TDistribution(v - 1);
+                double den = (k-1) * (2 + k) / 2;
+                double p = 1.0 - a / den;
+                TDistribution tDist = new TDistribution(v);
                 double t = 
-                    tDist.inverseCumulativeProbability(1.0 - a / 2.0);
+                    tDist.inverseCumulativeProbability(p);
 
-                return t * Math.sqrt(k- 1);
+                return Math.sqrt(2) * t;
             }
         }
         // ボンフェロー法
