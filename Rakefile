@@ -6,3 +6,5 @@ Rake::JavaExtensionTask.new(name='num4anova')  do | ext |
   ext.classpath        = jars.map { |x| File.expand_path x }.join ":"
 end
 task :default => [:compile]
+
+

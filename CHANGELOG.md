@@ -2,13 +2,12 @@
 
 ## Unreleased
 
-## [0.0.2] - 2023-12-12
+## [0.0.2] - 2024-01-23
 
-### change
-- chg Q-QPlot and kstest
-- chg from one-side test to two side test.
+### add
+- add Multiple Comparisons function.
 
-## [0.0.1] - 2023-12-05
+## [0.0.1] - 2024-01-10
 
 ### Fixed
 - fix first fixed.
