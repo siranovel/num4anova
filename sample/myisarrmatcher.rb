@@ -1,20 +1,19 @@
-# 小数点桁四捨五入
-module MyFileMatcher
+# 配列
+module MyIsArrMatcher
   class Matcher
     def initialize(expected)
       @expected = expected
     end
-
     def matches?(actual)
         @actual = actual
-        return File.exist?(@expected)
+        return @actual == @expected 
     end
-
     def failure_message
       "#{@expected} expected but got #{@actual}"
     end
+
   end
-  def is_exist(expected)
+  def is_array(expected)
     Matcher.new(expected)
   end
 end

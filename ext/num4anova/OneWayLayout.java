@@ -17,7 +17,6 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 import org.jfree.chart.ChartUtils;
 import java.io.File;
