@@ -3,12 +3,15 @@ require 'num4anova.jar'
 require 'jfreechart-1.5.4.jar'
 require 'commons-math3-3.6.1.jar'
 
+require_relative('dunnet')
+
 java_import 'MultiComp'
 # 多重比較を行う
 #  (Apache commoms math3使用)
 module MultiCompLib
     # パラメトリック検定
     class ParametrixTestLib
+        include DunnetTestLib
         def initialize
             @paramTest = MultiComp::ParametrixTest.getInstance()
         end
@@ -26,7 +29,8 @@ module MultiCompLib
         #        [26.4, 32.5, 31.3],
         #        [24.5, 21.2, 22.4],
         #    ]
-        #    paraTest.turkey_test(xi, a)
+        #    paraTest = MultiCompLib::ParametrixTestLib.new
+        #    paraTest.turkey_test(xi, 0.05)
         #    => 
         #      [
         #        [false, false, false, true, false],
@@ -53,7 +57,8 @@ module MultiCompLib
         #        [26.4, 32.5, 31.3],
         #        [24.5, 21.2, 22.4],
         #    ]
-        #    paraTest.bonferrono_test(xi, a)
+        #    paraTest = MultiCompLib::ParametrixTestLib.new
+        #    paraTest.bonferrono_test(xi, 0.05)
         #    => 
         #      [
         #        [false, false, false, true, false],
