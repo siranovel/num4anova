@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.3] - 2024-01-26
+
+### add
+- add function of dunnet_test.
+
 ## [0.0.2] - 2024-01-23
 
 ### add

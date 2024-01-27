@@ -70,8 +70,8 @@ RSpec.describe MultiCompLib do
                 [24.5, 21.2, 22.4],
             ]
             res = [
-                [false, false, false, true, false],
-                [false, false, false, true, false],
+                [false, false, false, true,  false],
+                [false, false, false, true,  false],
                 [false, false, false, false, false],
                 [false, false, false, false, false],
                 [false, false, false, false, false],
@@ -89,14 +89,71 @@ RSpec.describe MultiCompLib do
                 [24.5, 21.2, 22.4],
             ]
             res = [
-                [false, false, false, true, false],
-                [false, false, false, true, false],
+                [false, false, false, true,  false],
+                [false, false, false, true,  false],
                 [false, false, false, false, false],
                 [false, false, false, false, false],
                 [false, false, false, false, false],
             ]
             expect(
                 paraTest.bonferrono_test(xi, a)
+            ).to is_array(res)
+        end
+        it '#twoside_test' do
+            xi = [
+                [12.2, 18.8, 18.2],
+                [22.2, 20.5, 14.6],
+                [20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3],
+                [24.5, 21.2, 22.4],
+            ]
+            res = [
+                [false, false, false, true,  false],
+                [false, false, false, true,  false],
+                [false, false, false, false, false],
+                [true,  true,  false, false, false],
+                [false, false, false, false, false],
+            ]
+            expect(
+                paraTest.twoside_test(xi, a)
+            ).to is_array(res)
+        end
+        it '#rightside_test' do
+            xi = [
+                [12.2, 18.8, 18.2],
+                [22.2, 20.5, 14.6],
+                [20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3],
+                [24.5, 21.2, 22.4],
+            ]
+            res = [
+                [false, false, true,  true,  true],
+                [false, false, false, true,  false],
+                [false, false, false, true,  false],
+                [false, false, false, false, false],
+                [false, false, false, true,  false],
+            ]
+            expect(
+                paraTest.rightside_test(xi, a)
+            ).to is_array(res)
+        end
+        it '#leftside_test' do
+            xi = [
+                [12.2, 18.8, 18.2],
+                [22.2, 20.5, 14.6],
+                [20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3],
+                [24.5, 21.2, 22.4],
+            ]
+            res = [
+                [false, false, false, false, false],
+                [false, false, false, false, false],
+                [true,  false, false, false, false],
+                [true,  true,  true,  false, true],
+                [true,  false, false, false, false],
+            ]
+            expect(
+                paraTest.leftside_test(xi, a)
             ).to is_array(res)
         end
     end
