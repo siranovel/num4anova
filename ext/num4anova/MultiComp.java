@@ -23,6 +23,28 @@ public class MultiComp {
             double[][] statistic = hypoth.calcTestStatistic(xi);
             return hypoth.executeTest(statistic, a * 0.5);
         }
+        public boolean scheffe_test(double[][] xi, double a) {
+            return false;
+        }
+
+        public boolean[][] twosideTest(double[][] xi, double a) {
+            HypothesisTest hypoth = new TwoSideTest();
+            double[][] statistic = hypoth.calcTestStatistic(xi);
+
+            return hypoth.executeTest(statistic, a / 2.0);
+        }
+        public boolean[][] rightsideTest(double[][] xi, double a) {
+            HypothesisTest hypoth = new RightSideTest();
+            double[][] statistic = hypoth.calcTestStatistic(xi);
+
+            return hypoth.executeTest(statistic, a);
+        }
+        public boolean[][] leftsideTest(double[][] xi, double a) {
+            HypothesisTest hypoth = new LeftSideTest();
+            double[][] statistic = hypoth.calcTestStatistic(xi);
+
+            return hypoth.executeTest(statistic, a);
+        }
         /*********************************/
         /* interface define              */
         /*********************************/
@@ -145,7 +167,6 @@ public class MultiComp {
                 TDistribution tDist = new TDistribution(v);
                 double t = 
                     tDist.inverseCumulativeProbability(p);
-
                 return Math.sqrt(2) * t;
             }
         }
@@ -219,6 +240,127 @@ public class MultiComp {
                 }
                 return sumSq / na;
             } 
+        }
+        // ダネット法
+        private class DunnetTest{
+            private int k = 0;
+            private int v = 0;
+            private double[] mean = null;
+            private double[] n = null;
+            protected int getK() { return k;}
+            protected int getV() { return v;}
+            public double[][] calcTestStatistic(double[][] xi) {
+                k = xi.length;
+                mean = new double[k];
+                n = new double[k];
+                double[][] statistic = new double[k][k];
+                double ve = calcVe(xi);
+
+                for(int i = 0; i < k; i++) {
+                    for(int j = 0; j < k; j++) {
+                        statistic[i][j] = (mean[j] - mean[i]) 
+                                        / Math.sqrt(ve * (1.0 / n[j] + 1.0 / n[i]));
+                    }
+                }                
+                return statistic;
+            }
+            private double calcVe(double[][] xi) {
+                double sumSq = 0.0;
+                int sumN = 0;
+                for(int i = 0; i < k; i++) {
+                    DescriptiveStatistics stat = new DescriptiveStatistics();
+                    Arrays.stream(xi[i]).forEach(stat::addValue);
+                    mean[i] = stat.getMean();
+                    n[i] = stat.getN();
+                    sumSq += (n[i] - 1) * stat.getVariance();
+                    sumN += n[i];
+                    stat.clear();
+                }
+                v = sumN - k;
+                return sumSq / v;
+            }
+        }        
+        private class TwoSideTest extends DunnetTest 
+                                  implements HypothesisTest {
+            public boolean[][] executeTest(double[][] statistic, double a) {
+                int v = super.getV();
+                int k = super.getK();
+                double den = k - 1;
+                double p = 1.0 - a / den;
+                TDistribution tDist = new TDistribution(v);
+                double l_val = tDist.inverseCumulativeProbability(a  / den);
+                double r_val = tDist.inverseCumulativeProbability(1.0 - a / den);
+                boolean[][] ret = new boolean[k][k];
+
+                for(int i = 0; i < k; i++) {
+                    for(int j = 0; j < k; j++) {
+                       ret[i][j] = evaluation(statistic[i][j], l_val, r_val ); 
+                    }
+                }
+                return ret;
+            }
+            private boolean evaluation(double statistic, double l_val, double r_val) {
+                boolean ret = true;
+
+                if ((l_val < statistic) && (statistic < r_val)) {
+                    ret = false;
+                }
+                return ret;
+            }
+        }
+        private class RightSideTest extends DunnetTest 
+                                  implements HypothesisTest {
+            public boolean[][] executeTest(double[][] statistic, double a) {
+                int v = super.getV();
+                int k = super.getK();
+                double den = k - 1;
+                double p = 1.0 - a / den;
+                TDistribution tDist = new TDistribution(v);
+                double r_val = tDist.inverseCumulativeProbability(1.0 - a);
+                boolean[][] ret = new boolean[k][k];
+
+                for(int i = 0; i < k; i++) {
+                    for(int j = 0; j < k; j++) {
+                       ret[i][j] = evaluation(statistic[i][j], r_val ); 
+                    }
+                }
+                return ret;
+            }
+            private boolean evaluation(double statistic, double r_val) {
+                boolean ret = true;
+
+                if (statistic < r_val) {
+                    ret = false;
+                }
+                return ret;
+            }
+        }
+        private class LeftSideTest extends DunnetTest 
+                                  implements HypothesisTest {
+            public boolean[][] executeTest(double[][] statistic, double a) {
+                int v = super.getV();
+                int k = super.getK();
+                double den = k - 1;
+                double p = a / den;
+                TDistribution tDist = new TDistribution(v);
+                double l_val = tDist.inverseCumulativeProbability(a);
+                boolean[][] ret = new boolean[k][k];
+
+                for(int i = 0; i < k; i++) {
+                    for(int j = 0; j < k; j++) {
+                       ret[i][j] = evaluation(statistic[i][j], l_val ); 
+                    }
+                }
+                return ret;
+            }
+            private boolean evaluation(double statistic, double l_val) {
+                boolean ret = true;
+
+                if (l_val < statistic) {
+                    ret = false;
+                }
+                return ret;
+            }
         }
     }
 }
