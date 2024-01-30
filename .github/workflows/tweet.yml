@@ -9,7 +9,7 @@ jobs:
   tweet:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    step:
+    steps:
     - uses: ethomson/send-tweet-action@v1
       with:
         status: "Hi, this is a test!"
