@@ -72,13 +72,13 @@ module Num4AnovaLib
         #   @param [double] a         有意水準
         #   @return [boolean] 検定結果(true:棄却域内 false:棄却域外)
         # @example
-        #    xi = [
-        #        [12.2, 18.8, 18.2],
-        #        [22.2, 20.5, 14.6],
-        #        [20.8, 19.5, 26.3],
-        #        [26.4, 32.5, 31.3],
-        #        [24.5, 21.2, 22.4],
-        #    ]
+        #   xi = [
+        #       [12.2, 18.8, 18.2],
+        #       [22.2, 20.5, 14.6],
+        #       [20.8, 19.5, 26.3],
+        #       [26.4, 32.5, 31.3],
+        #       [24.5, 21.2, 22.4],
+        #   ]
         #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
         #   oneWay.oneWay.oneway_anova(xi, 0.05)
         #   => true
@@ -92,18 +92,62 @@ module Num4AnovaLib
         #   @param [double] a         有意水準
         #   @return [boolean] 検定結果(true:棄却域内 false:棄却域外)
         # @example
-        #    xi = [
-        #        [12.2, 18.8, 18.2],
-        #        [22.2, 20.5, 14.6],
-        #        [20.8, 19.5, 26.3],
-        #        [26.4, 32.5, 31.3],
-        #        [24.5, 21.2, 22.4],
-        #    ]
+        #   xi = [
+        #       [12.2, 18.8, 18.2],
+        #       [22.2, 20.5, 14.6],
+        #       [20.8, 19.5, 26.3],
+        #       [26.4, 32.5, 31.3],
+        #       [24.5, 21.2, 22.4],
+        #   ]
         #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
         #   oneWay.bartlet(xi, 0.05)
         #   => true
         def bartlet(xi, a)
             return @oneWay.bartletTest(xi.to_java(Java::double[]), a)
+        end
+        # 反復測定Plot
+        #
+        # @overload replicate_plot(dname, vals)
+        #   @param [String] dname データ名
+        #   @param [Hash] vals Hash(String, double[])
+        #   @return [void]  replicate.jpegファイルを出力
+        # @example
+        #   vals = {
+        #        "stageA1" => [27, 52, 18, 21, 32],
+        #        "stageA2" => [52, 72, 31, 50, 45],
+        #        "stageA3" => [47, 54, 29, 43, 32],
+        #        "stageA4" => [28, 50, 22, 26, 29],
+        #       }
+        #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
+        #   oneWay.replicate_plot("LDH", vals)
+        #   => replicate.jpeg
+        # @note
+        #   グラフは、jfreechartを使用
+        def replicate_plot(dname, vals)
+            o = HashMap.new
+            vals.each{|k, v|
+                o[k] = v.to_java(Java::double)
+            }
+            return @oneWay.replicatePlot(dname, o)
+        end
+        # 反復測定検定
+        #
+        # @overload replicate_test(xi, a)
+        #   @param [array]  xi データ(double[][])
+        #   @param [double] a         有意水準
+        #   @return [boolean] 検定結果(true:棄却域内 false:棄却域外)
+        # @example
+        #   xi = [
+        #       [27, 52, 18, 21, 32],
+        #       [52, 72, 31, 50, 45],
+        #       [47, 54, 29, 43, 32],
+        #       [28, 50, 22, 26, 29],
+        #   ]
+        #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
+        #   oneWay.replicate_test("LDH", vals)
+        #   => true
+        def replicate_test(xi, a)
+            return @oneWay.replicateTest(xi.to_java(Java::double[]), a)
         end
     end
 end

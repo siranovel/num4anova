@@ -249,6 +249,7 @@ public class MultiComp {
             private double[] n = null;
             protected int getK() { return k;}
             protected int getV() { return v;}
+
             public double[][] calcTestStatistic(double[][] xi) {
                 k = xi.length;
                 mean = new double[k];
@@ -267,8 +268,10 @@ public class MultiComp {
             private double calcVe(double[][] xi) {
                 double sumSq = 0.0;
                 int sumN = 0;
+
                 for(int i = 0; i < k; i++) {
                     DescriptiveStatistics stat = new DescriptiveStatistics();
+
                     Arrays.stream(xi[i]).forEach(stat::addValue);
                     mean[i] = stat.getMean();
                     n[i] = stat.getN();
@@ -286,7 +289,7 @@ public class MultiComp {
                 int v = super.getV();
                 int k = super.getK();
                 double den = k - 1;
-                double p = 1.0 - a / den;
+
                 TDistribution tDist = new TDistribution(v);
                 double l_val = tDist.inverseCumulativeProbability(a  / den);
                 double r_val = tDist.inverseCumulativeProbability(1.0 - a / den);

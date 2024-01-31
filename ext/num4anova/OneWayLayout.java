@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import org.apache.commons.math3.stat.inference.OneWayAnova;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.FDistribution;
 import java.util.Map;
 public class OneWayLayout {
     private static OneWayLayout oneWay = new OneWayLayout();
@@ -55,6 +56,18 @@ public class OneWayLayout {
     }
     public boolean bartletTest(double[][] xi, double a) {
         OneWayAnovaTest oneway = new BartletTest();
+
+        double statistic = oneway.calcTestStatistic(xi);
+        return oneway.test(statistic, a);
+    }
+    public void replicatePlot(String dname, Map<String, double[]> vals) {
+        ChartPlot plot = new ReplicateChartPlot();
+
+        JFreeChart chart = plot.createChart("反復測定", dname, vals);
+        plot.writeJPEG("replicate.jpeg", chart, 800, 500);
+    }
+    public boolean replicateTest(double[][] xi, double a) {
+        OneWayAnovaTest oneway = new ReplicateTest();
 
         double statistic = oneway.calcTestStatistic(xi);
         return oneway.test(statistic, a);
@@ -196,6 +209,7 @@ public class OneWayLayout {
             }
         }
     }
+    // バートレット検定
     private class BartletTest implements OneWayAnovaTest {
         private int n = 0;
         public double calcTestStatistic(double[][] xi) {
@@ -226,6 +240,7 @@ public class OneWayLayout {
             double invSumN = 0.0;
             int sumN = 0;
             DescriptiveStatistics stat = new DescriptiveStatistics();
+
             for(int i = 0; i < n; i++) {
                 Arrays.stream(xi[i]).forEach(stat::addValue);
                 invSumN += 1.0 / (stat.getN() - 1.0);
@@ -241,6 +256,128 @@ public class OneWayLayout {
             double r_val = chi2Dist.inverseCumulativeProbability(1.0 - a);
 
             return (r_val < statistic) ? true : false;
+        }
+    }
+    // 反復測定Plot
+    private class ReplicateChartPlot implements ChartPlot {
+        public JFreeChart createChart(String title, String dname, Map<String, double[]> vals) {
+            CategoryPlot plot = createPlot(dname, vals);
+            ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
+            JFreeChart chart = new JFreeChart(title, plot);
+
+            ChartUtils.applyCurrentTheme(chart);
+            return chart;
+        }
+        private CategoryPlot createPlot( String dname, Map<String, double[]> vals) {
+            CreatePlot plotImpl = new ReplicatePlot();
+
+            return plotImpl.createPlot(dname, vals);
+        }
+        private class ReplicatePlot implements CreatePlot {
+            public CategoryPlot createPlot(String dname, Map<String, double[]> vals) {
+                LineAndShapeRenderer renderer = new LineAndShapeRenderer(true, true);
+
+                renderer.setDefaultToolTipGenerator(
+                    new StandardCategoryToolTipGenerator()
+                );
+                CategoryPlot plot = new CategoryPlot();
+
+                plot.setOrientation(PlotOrientation.VERTICAL);
+                plot.mapDatasetToRangeAxis(0,0);
+	        plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+                
+                /*--- 横軸 ---*/
+                CategoryAxis categoryAxis = new CategoryAxis("因子");
+                plot.setDomainAxis(categoryAxis);
+
+                /*--- 縦軸 ---*/
+                NumberAxis valueAxis0 = new NumberAxis("推定周辺平均");
+                plot.setRangeAxis(valueAxis0);
+
+                plot.setRenderer(0, renderer);
+                plot.setDataset(0, createDataset(dname, vals));
+                return plot;
+            }
+            private CategoryDataset createDataset(String dname, Map<String, double[]> vals) {
+                DefaultCategoryDataset data = new DefaultCategoryDataset();
+                DescriptiveStatistics stat = new DescriptiveStatistics();
+
+                for(Map.Entry<String, double[]> entry : vals.entrySet()) {
+                    double[] v = entry.getValue();
+
+                    Arrays.stream(v).forEach(stat::addValue);
+                    data.addValue(stat.getMean(), dname, entry.getKey());
+                    stat.clear();
+                }
+                return data;
+            }
+        }
+    }
+    private class ReplicateTest implements OneWayAnovaTest {
+        private int a1 = 0;
+        private int b1 = 0;
+        public double calcTestStatistic(double[][] xi) {
+            b1 = xi[0].length;
+            a1 = xi.length;
+            double st = calcSt(xi, a1, b1);
+            double sa = calcSa(xi, a1, b1);
+            double sb = calcSb(xi, a1, b1);       
+            double se = st - sa - sb;
+            double meanSa = sa / (a1 - 1);
+            double meanSe = se / ((a1 - 1) * (b1 - 1));
+
+            return meanSa / meanSe ;
+        }
+        private double calcSt(double[][] xi, int a, int b) {
+            DescriptiveStatistics stat = new DescriptiveStatistics();
+            double sumSt1 = 0.0;
+            double sumSt2 = 0.0;
+
+            for(int i = 0; i < a; i++) {
+                Arrays.stream(xi[i]).forEach(stat::addValue);
+                sumSt1 += stat.getSumsq();
+                sumSt2 += stat.getSum();
+                stat.clear();
+            }
+            return sumSt1 - sumSt2 * sumSt2 / (a * b);
+        }
+        private double calcSa(double[][] xi, int a, int b) {
+            double sumSa1 = 0.0;
+            double sumSa2 = 0.0;
+            double[] an = new double[a];
+
+            for(int i = 0; i < a; i++) {
+                for(int j = 0; j < b; j++) {
+                    an[i] += xi[i][j];
+                    sumSa2 += xi[i][j];
+                }
+            }
+            DescriptiveStatistics stat = new DescriptiveStatistics();
+            Arrays.stream(an).forEach(stat::addValue);
+            sumSa1 = stat.getSumsq() / b;
+            return sumSa1 - sumSa2 * sumSa2 / (a * b);
+        }
+        private double calcSb(double[][] xi, int a, int b) {
+            double[] bn = new double[b];
+            double sumSb1 = 0.0;
+            double sumSb2 = 0.0;
+
+            for(int i = 0; i < a; i++) {
+                for(int j = 0; j < b; j++) {
+                    bn[j] += xi[i][j];
+                    sumSb2 += xi[i][j];
+                }
+            }
+            DescriptiveStatistics stat = new DescriptiveStatistics();
+            Arrays.stream(bn).forEach(stat::addValue);
+            sumSb1 = stat.getSumsq() / a;
+            return sumSb1 - sumSb2 * sumSb2 / (a * b);
+        }
+        public boolean test(double statistic, double a) {
+            FDistribution fDist = new FDistribution(a1 - 1, (a1 - 1) * (b1 - 1));
+            double f = fDist.inverseCumulativeProbability(1.0 - a);
+            
+            return (statistic >= f) ? true : false;
         }
     }
 }
