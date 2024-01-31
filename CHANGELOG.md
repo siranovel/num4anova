@@ -2,10 +2,15 @@
 
 ## Unreleased
 
+## [0.0.4] - 2024-01-30
+### add
+- add function of replicate_plot
+- add function of replicate_test
+
 ## [0.0.3] - 2024-01-26
 
 ### add
-- add function of dunnet_test.
+- add function of dunnet_test
 
 ## [0.0.2] - 2024-01-23
 
