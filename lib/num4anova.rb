@@ -4,6 +4,7 @@ require 'jfreechart-1.5.4.jar'
 require 'commons-math3-3.6.1.jar'
 
 java_import 'OneWayLayout'
+java_import 'TwoWayLayout'
 java_import 'java.util.HashMap'
 # 分散分析を行う
 #  (Apache commoms math3使用)
@@ -144,10 +145,54 @@ module Num4AnovaLib
         #       [28, 50, 22, 26, 29],
         #   ]
         #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
-        #   oneWay.replicate_test("LDH", vals)
+        #   oneWay.replicate_test(xi, 0.05)
         #   => true
         def replicate_test(xi, a)
             return @oneWay.replicateTest(xi.to_java(Java::double[]), a)
+        end
+    end
+
+    # 二元配置の分散分析
+    class TwoWayLayoutLib
+        def initialize
+            @twoWay = TwoWayLayout.getInstance()
+        end
+        # 二元配置の分散分析
+        #
+        # @overload twoway_anova(xij, a)
+        #   @param [array]  xij データ(double[][][])
+        #   @param [double] a         有意水準
+        #   @return [Array] 検定結果(boolean[] true:棄却域内 false:棄却域外)
+        # @example
+        #   xij = [
+        #           [
+        #             [13.2, 15.7, 11.9],
+        #             [16.1, 15.7, 15.1],
+        #             [9.1,  10.3,  8.2],
+        #           ],
+        #           [
+        #             [22.8, 25.7, 18.5],
+        #             [24.5, 21.2, 24.2],
+        #             [11.9, 14.3, 13.7],
+        #           ],
+        #           [
+        #             [21.8, 26.3, 32.1],
+        #             [26.9, 31.3, 28.3],
+        #             [15.1, 13.6, 16.2],
+        #           ],
+        #           [
+        #             [25.7, 28.8, 29.5],
+        #             [30.1, 33.8, 29.6],
+        #             [15.2, 17.3, 14.8],
+        #           ],
+        #   ]
+        #   twoWay = Num4AnovaLib::TwoWayLayoutLib.new 
+        #   twoWay.twoway_anova(xij, 0.05)
+        #   =>
+        #     [true, true, true]
+        def twoway_anova(xij, a)
+            ret = @twoWay.twowayAnova(xij.to_java(Java::double[][]), a)
+            return ret.to_a
         end
     end
 end
