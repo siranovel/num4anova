@@ -77,6 +77,37 @@ RSpec.describe Num4AnovaLib do
             ).to eq true
         end
     end
+    describe Num4AnovaLib::TwoWayLayoutLib do
+        let!(:twoWay) { Num4AnovaLib::TwoWayLayoutLib.new }
+        it '#twoway_anova' do
+            xij = [
+                    [
+                      [13.2, 15.7, 11.9],
+                      [16.1, 15.7, 15.1],
+                      [9.1,  10.3,  8.2],
+                    ],
+                    [
+                      [22.8, 25.7, 18.5],
+                      [24.5, 21.2, 24.2],
+                      [11.9, 14.3, 13.7],
+                    ],
+                    [
+                      [21.8, 26.3, 32.1],
+                      [26.9, 31.3, 28.3],
+                      [15.1, 13.6, 16.2],
+                    ],
+                    [
+                      [25.7, 28.8, 29.5],
+                      [30.1, 33.8, 29.6],
+                      [15.2, 17.3, 14.8],
+                    ],
+            ]
+            res = [true, true, true]
+            expect(
+                twoWay.twoway_anova(xij, a)
+            ).to is_array(res)
+        end
+    end
 end
 
 RSpec.describe MultiCompLib do
