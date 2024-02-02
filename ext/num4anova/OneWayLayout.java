@@ -58,7 +58,7 @@ public class OneWayLayout {
         OneWayAnovaTest oneway = new BartletTest();
 
         double statistic = oneway.calcTestStatistic(xi);
-        return oneway.test(statistic, a);
+        return oneway.execute_test(statistic, a);
     }
     public void replicatePlot(String dname, Map<String, double[]> vals) {
         ChartPlot plot = new ReplicateChartPlot();
@@ -70,7 +70,7 @@ public class OneWayLayout {
         OneWayAnovaTest oneway = new ReplicateTest();
 
         double statistic = oneway.calcTestStatistic(xi);
-        return oneway.test(statistic, a);
+        return oneway.execute_test(statistic, a);
     }
     /*********************************/
     /* interface define              */
@@ -91,7 +91,7 @@ public class OneWayLayout {
     }
     private interface OneWayAnovaTest {
         double calcTestStatistic(double[][] xi);
-        boolean test(double statistic, double a);
+        boolean execute_test(double statistic, double a);
     }
     /*********************************/
     /* class define                  */
@@ -251,7 +251,7 @@ public class OneWayLayout {
                         * (invSumN - 1.0 / (sumN - n));
             return ln2L / deno;
         }
-        public boolean test(double statistic, double a) {
+        public boolean execute_test(double statistic, double a) {
             ChiSquaredDistribution chi2Dist = new ChiSquaredDistribution(n - 1);
             double r_val = chi2Dist.inverseCumulativeProbability(1.0 - a);
 
@@ -373,7 +373,7 @@ public class OneWayLayout {
             sumSb1 = stat.getSumsq() / a;
             return sumSb1 - sumSb2 * sumSb2 / (a * b);
         }
-        public boolean test(double statistic, double a) {
+        public boolean execute_test(double statistic, double a) {
             FDistribution fDist = new FDistribution(a1 - 1, (a1 - 1) * (b1 - 1));
             double f = fDist.inverseCumulativeProbability(1.0 - a);
             

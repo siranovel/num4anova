@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.5] - 2024-02-01
+
+### add
+- add function of twoway_anova.
+
 ## [0.0.4] - 2024-01-30
 ### add
 - add function of replicate_plot

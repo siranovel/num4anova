@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name          = 'num4anova'
-  s.version       = '0.0.4'
-  s.date          = '2024-01-30'
+  s.version       = '0.0.5'
+  s.date          = '2024-02-01'
   s.summary       = "num for variance analysis"
   s.description   = "numerical solution for analysis of variance."
   s.platform      = 'java'
