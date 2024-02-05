@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.6] - 2024-02-04
+
+### add
+- add function of twoway2_anova.
+
 ## [0.0.5] - 2024-02-01
 
 ### add
