@@ -79,7 +79,7 @@ RSpec.describe Num4AnovaLib do
     end
     describe Num4AnovaLib::TwoWayLayoutLib do
         let!(:twoWay) { Num4AnovaLib::TwoWayLayoutLib.new }
-        it '#twoway_anova' do
+        it '#twoway_anova 1' do
             xij = [
                     [
                       [13.2, 15.7, 11.9],
@@ -105,6 +105,42 @@ RSpec.describe Num4AnovaLib do
             res = [true, true, true]
             expect(
                 twoWay.twoway_anova(xij, a)
+            ).to is_array(res)
+        end
+        it '#twoway_anova 1' do
+            xij = [
+                    [
+                      [13.2, 15.7, 11.9],
+                      [16.1, 15.7, 15.1],
+                    ],
+                    [
+                      [22.8, 25.7, 18.5],
+                      [24.5, 21.2, 24.2],
+                    ],
+                    [
+                      [21.8, 26.3, 32.1],
+                      [26.9, 31.3, 28.3],
+                    ],
+                    [
+                      [25.7, 28.8, 29.5],
+                      [30.1, 33.8, 29.6],
+                    ],
+            ]
+            res = [true, false, false]
+            expect(
+                twoWay.twoway_anova(xij, a)
+            ).to is_array(res)
+        end
+        it '#twoway2_anova' do
+            xij = [
+                [13.6, 15.6, 9.2],
+                [22.3, 23.3, 13.3],
+                [26.7, 28.8, 15.0],
+                [28.0, 31.2, 15.8],
+            ]
+            res = [true, true]
+            expect(
+                twoWay.twoway2_anova(xij, a)
             ).to is_array(res)
         end
     end
