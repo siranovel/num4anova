@@ -158,6 +158,7 @@ module Num4AnovaLib
             @twoWay = TwoWayLayout.getInstance()
         end
         # 二元配置の分散分析
+        #  (繰り返し数が等しい時)
         #
         # @overload twoway_anova(xij, a)
         #   @param [array]  xij データ(double[][][])
@@ -194,6 +195,28 @@ module Num4AnovaLib
             ret = @twoWay.twowayAnova(xij.to_java(Java::double[][]), a)
             return ret.to_a
         end
+        # 二元配置の分散分析
+        #  (繰り返しのない時)
+        #
+        # @overload twoway2_anova(xij, a)
+        #   @param [array]  xij データ(double[][])
+        #   @param [double] a         有意水準
+        #   @return [Array] 検定結果(boolean[] true:棄却域内 false:棄却域外)
+        # @example
+        #   xij = [
+        #       [13.6, 15.6, 9.2],
+        #       [22.3, 23.3, 13.3],
+        #       [26.7, 28.8, 15.0],
+        #       [28.0, 31.2, 15.8],
+        #   ]
+        #   twoWay = Num4AnovaLib::TwoWayLayoutLib.new 
+        #   twoWay.twoway2_anova(xij, 0.05)
+        #   =>
+        #     [true, true]
+        def twoway2_anova(xij, a)
+            ret = @twoWay.twoway2Anova(xij.to_java(Java::double[]), a)
+            return ret.to_a
+        end        
     end
 end
 

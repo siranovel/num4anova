@@ -12,6 +12,12 @@ public class TwoWayLayout {
         double[] statistic = twoway.calcTestStatistic(xij);
         return twoway.execute_test(statistic, a);
     }
+    public boolean[] twoway2Anova(double[][] xij, double a) {
+        TwoWay2AnovaTest twoway = new TwoWay2Anova();
+
+        double[] statistic = twoway.calcTestStatistic(xij);
+        return twoway.execute_test(statistic, a);
+    }
     /*********************************/
     /* interface define              */
     /*********************************/
@@ -19,9 +25,14 @@ public class TwoWayLayout {
         double[] calcTestStatistic(double[][][] xij);
         boolean[] execute_test(double statistic[], double a);
     }
+    private interface TwoWay2AnovaTest {
+        double[] calcTestStatistic(double[][] xij);
+        boolean[] execute_test(double statistic[], double a);
+    }
     /*********************************/
     /* class define                  */
     /*********************************/
+    // 二元配置の分散分析(繰り返し数が等しい時)
     private class TwoWayAnova implements TwoWayAnovaTest {
         private int a = 0;
         private int b = 0;
@@ -32,6 +43,7 @@ public class TwoWayLayout {
         private int en = 0;
         public double[] calcTestStatistic(double[][][] xij) {
             double statistic[] = new double[3];
+
             a = xij.length;
             b = xij[0].length;
             n = xij[0][0].length;
@@ -45,7 +57,6 @@ public class TwoWayLayout {
             double[] meanBn = calcMeanBn(meanXij);
             double meanABn = calcMeanABn(meanAn);
 
-            double allDrift = calcAllDrift(xij, meanABn); // 全変動
             double anDrift  = calcAnDrift(meanAn, meanABn); // 水準Ai間変動
             double bnDrift  = calcBnDrift(meanBn, meanABn); // 水準Bj間変動
                                                             // 交互作用の変動
@@ -76,20 +87,17 @@ public class TwoWayLayout {
         }
         private double[] calcMeanAn(double[][] meanXij) {
             double[] an = new double[a];
-            DescriptiveStatistics stat = new DescriptiveStatistics();
 
             for(int i = 0; i < a; i++) {
                 double sumSa = 0.0;
                 for(int j = 0; j < b; j++) {
-                    sumSa += meanXij[i][j];
+                    an[i] += meanXij[i][j] / b;
                 }
-                an[i] = sumSa / b;
             }
             return an;
         }
         private double[] calcMeanBn(double[][] meanXij) {
             double[] bn = new double[b];
-            double[] sumA = new double[b];
 
             for(int i = 0; i < a; i++) {
                 for(int j = 0; j < b; j++) {
@@ -103,20 +111,6 @@ public class TwoWayLayout {
 
             Arrays.stream(meanAn).forEach(stat::addValue);
             return stat.getMean();
-        }
-        // 全変動
-        private double calcAllDrift(double[][][] xij, double meanABn) {
-            double sumDrift = 0.0;
-
-            for(int i = 0; i < a; i++) {
-                for(int j = 0; j < b; j++) {
-                    for(int k = 0; k < xij[i][j].length; k++) {
-                        double diffXijk = xij[i][j][k] - meanABn;
-                        sumDrift += diffXijk * diffXijk; 
-                    }
-                }
-            }
-            return sumDrift;
         }
         // 水準Ai間変動
         private double calcAnDrift(double[] meanAn, double meanABn) {
@@ -179,7 +173,113 @@ public class TwoWayLayout {
         private boolean evaluation(FDistribution fDist, double statistic, double a) {
             double r_val = fDist.inverseCumulativeProbability(1.0 - a);
 
-            return (statistic < r_val) ? false : true;
+            return (statistic >= r_val) ? true : false;
+        }
+    }
+    // 二元配置の分散分析(繰り返しのない時)
+    private class TwoWay2Anova implements TwoWay2AnovaTest {
+        private int a = 0;
+        private int b = 0;
+        private int an = 0;
+        private int bn = 0;
+        private int en = 0;
+        public double[] calcTestStatistic(double[][] xij) {
+            double statistic[] = new double[2];
+
+            a = xij.length;
+            b = xij[0].length;
+            an = a- 1;
+            bn = b - 1;
+            en = (a- 1) * (b - 1);
+
+            double[] meanAn = calcMeanAn(xij);
+            double[] meanBn = calcMeanBn(xij);
+            double meanAB = calcMeanAB(meanAn);
+
+            double anDrift  = calcAnDrift(meanAn, meanAB); // 水準Ai間変動
+            double bnDrift  = calcBnDrift(meanBn, meanAB); // 水準Bj間変動
+            double benchDrift  = calcBenchDrift(xij, meanAn, meanBn, meanAB);   // 水準内変動
+            double va = anDrift / an;
+            double vb = bnDrift / bn;
+            double ve = benchDrift / en;
+
+            statistic[0] = va / ve;
+            statistic[1] = vb / ve;
+            return statistic;
+        }
+        private double[] calcMeanAn(double[][] xij) {
+            double[] an = new double[a];
+
+            for(int i = 0; i < a; i++) {
+                for(int j = 0; j < b; j++) {
+                    an[i] += xij[i][j] / b;
+                }
+            }
+            return an;
+        }
+        private double[] calcMeanBn(double[][] xij) {
+            double[] bn = new double[b];
+
+            for(int i = 0; i < a; i++) {
+                for(int j = 0; j < b; j++) {
+                    bn[j] += xij[i][j] / a;
+                }
+            }
+            return bn;
+        }
+        private double calcMeanAB(double[] meanAn) {
+            DescriptiveStatistics stat = new DescriptiveStatistics();
+
+            Arrays.stream(meanAn).forEach(stat::addValue);
+            return stat.getMean();
+        }
+        // 水準Ai間変動
+        private double calcAnDrift(double[] meanAn, double meanAB) {
+            double sumDrift = 0.0;
+
+            for(int i =0; i < meanAn.length; i++) {
+                double diffXi = meanAn[i] - meanAB;
+
+                sumDrift += diffXi * diffXi;
+            }
+            return b * sumDrift;      
+        }
+        // 水準Bj間変動
+        private double calcBnDrift(double[] meanBn, double meanAB) {
+            double sumDrift = 0.0;
+
+            for(int j = 0; j < meanBn.length; j++) {
+                double diffXj = meanBn[j] - meanAB;
+
+                sumDrift += diffXj * diffXj;
+            }
+            return a * sumDrift;
+        }
+        // 水準内変動
+        private double calcBenchDrift(double[][] xij, double[] meanAn, double[] meanBn, double meanAB) {
+            double sumDrift = 0.0;
+
+            for(int i = 0; i < a; i++) {
+                for(int j = 0; j < b; j++) {
+                    double diffXj = xij[i][j] - meanAn[i] - meanBn[j] + meanAB;
+
+                    sumDrift += diffXj * diffXj;
+                }
+            }
+            return sumDrift;
+        }
+
+        public boolean[] execute_test(double statistic[], double a) {
+            boolean[] ret = new boolean[2];
+
+            ret[0] = evaluation(new FDistribution(an, en), statistic[0], a);
+            ret[1] = evaluation(new FDistribution(bn, en), statistic[1], a);
+            return ret;
+        }
+        private boolean evaluation(FDistribution fDist, double statistic, double a) {
+            double r_val = fDist.inverseCumulativeProbability(1.0 - a);
+
+            return (statistic >= r_val) ? true : false;
         }
     }
 }
