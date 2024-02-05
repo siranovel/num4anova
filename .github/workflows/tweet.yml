@@ -16,7 +16,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
          node-version: "20"
-         cache: npm
     - uses: ethomson/send-tweet-action@v1
       with:
         status: "Hi, this is a test!"
