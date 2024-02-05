@@ -16,7 +16,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
          node-version: "20"
-    - uses: ethomson/send-tweet-action@v1
+    - uses: snow-actions/tweet@v1.1.0
       with:
         status: "Hi, this is a test!"
         consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
