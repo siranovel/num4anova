@@ -2,7 +2,7 @@ name: tweet bot
 
 on:
   workflow_run:
-    workflows: ['Ruby Yank']
+    workflows: ['Ruby Gem']
     types: [completed]
 
 jobs:
@@ -10,13 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-         node-version: "20"
-    - uses: snow-actions/tweet@v1.1.0
+        node-version: "20"
+        cache: npm
+    - uses: ethomson/send-tweet-action@v1
       with:
         status: "Hi, this is a test!"
         consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
