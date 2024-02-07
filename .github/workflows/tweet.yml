@@ -23,7 +23,7 @@ jobs:
         node-version: "20"
         cache: npm
     - run: npm --version
-    - run: npm install
+    - run: npm ci
     - uses: ethomson/send-tweet-action@v1
       with:
         status: "Hi, this is a test!"
