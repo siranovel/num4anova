@@ -2,7 +2,7 @@ name: tweet bot
 
 on:
   workflow_run:
-    workflows: ['Ruby Gem']
+    workflows: ['Ruby Yank']
     types: [completed]
 
 jobs:
