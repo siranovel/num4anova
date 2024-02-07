@@ -21,7 +21,7 @@ jobs:
       with:
         node-version: "20.x"
         cash: npm
-    - run: npm ci
+    - run: npm --version
     - uses: ethomson/send-tweet-action@v1
       with:
         status: "Hi, this is a test!"
