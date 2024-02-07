@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: "20"
-        cash: npm
+        cache: npm
     - run: npm --version
     - uses: ethomson/send-tweet-action@v1
       with:
