@@ -17,6 +17,9 @@ jobs:
     - uses: actions/checkout@v4
       with:
         path: package-lock.json
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 20
     - uses: ethomson/send-tweet-action@v1
       with:
         status: "Hi, this is a test!"
