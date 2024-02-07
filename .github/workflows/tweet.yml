@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        path: npm-shrinkwrap.json
+        path: .npm/npm-shrinkwrap.json
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
