@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.9] - 2024-03-02
+
+### add
+- add fuction of parallel_test.
+
 ## [0.0.6] - 2024-02-04
 
 ### add

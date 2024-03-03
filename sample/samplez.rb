@@ -144,6 +144,31 @@ RSpec.describe Num4AnovaLib do
             ).to is_array(res)
         end
     end
+    describe Num4AnovaLib::Num4AncovaLib do
+        let!(:ancova) { Num4AnovaLib::Num4AncovaLib.new }
+        it '#parallel_test' do
+           xi = [
+              [
+                  [3,35], [5,38], [3,39],
+              ],
+              [
+                  [3,36], [3,39], [8,54],
+              ],
+              [
+                  [2,40], [2,45], [2,39],
+              ],
+              [
+                  [3,47], [4,52], [2,48],
+              ],
+              [
+                  [1,64], [2,80], [0,70],
+              ],
+            ]
+            expect(
+               ancova.parallel_test(xi, a)
+            ).to eq false
+        end
+    end    
 end
 
 RSpec.describe MultiCompLib do
