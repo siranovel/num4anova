@@ -15,5 +15,5 @@ client = tweepy.Client(
 
 # ツィートする
 tweet = 'New commit pushed! num4anova'
-client/create_tweet(text=tweet)
+client.create_tweet(text=tweet)
 
