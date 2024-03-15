@@ -228,8 +228,8 @@ module Num4AnovaLib
         #
         # @overload parallel_test(xi, a)
         #   @param [array]  xi データ(double[][][])
-        #   @param [double] a         有意水準
-        #   @return [boolean] 検定結果(boolean true:棄却域内 false:棄却域外)
+        #   @param [double] a  有意水準
+        #   @return [boolean]  検定結果(boolean true:棄却域内 false:棄却域外)
         # @example
         #   xi = [
         #      [
@@ -253,6 +253,36 @@ module Num4AnovaLib
         #    => false
         def parallel_test(xi, a)
             @ancova.parallelTest(xi.to_java(Java::double[][]), a)
+        end
+        # 回帰直線の有意性検定
+        #
+        # @overload significance_testt(xi, a)
+        #   @param [array]  xi データ(double[][][])
+        #   @param [double] a  有意水準
+        #   @return [boolean]  検定結果(boolean true:棄却域内 false:棄却域外)
+        # @example
+        #   xi = [
+        #      [
+        #          [3,35], [5,38], [3,39],
+        #      ],
+        #      [
+        #          [3,36], [3,39], [8,54],
+        #      ],
+        #      [
+        #          [2,40], [2,45], [2,39],
+        #      ],
+        #      [
+        #          [3,47], [4,52], [2,48],
+        #      ],
+        #      [
+        #          [1,64], [2,80], [0,70],
+        #      ],
+        #    ]
+        #    ancova = Num4AnovaLib::Num4AncovaLib.new
+        #    ancova.significance_test(xi, 0.05)
+        #    => true
+        def significance_test(xi, a)
+            @ancova.significanceTest(xi.to_java(Java::double[][]), a)
         end
     end
 end

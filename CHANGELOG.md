@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.10] - 2024-03-05
+
+### add
+- add fuction of significance_test.
+
 ## [0.0.9] - 2024-03-02
 
 ### add
