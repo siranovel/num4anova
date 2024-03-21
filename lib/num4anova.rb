@@ -284,6 +284,9 @@ module Num4AnovaLib
         def significance_test(xi, a)
             @ancova.significanceTest(xi.to_java(Java::double[][]), a)
         end
+        def difference_test(xi, a)
+            @ancova.differenceTest(xi.to_java(Java::double[][]), a)
+        end
     end
 end
 
