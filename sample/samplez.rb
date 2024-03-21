@@ -190,6 +190,28 @@ RSpec.describe Num4AnovaLib do
                ancova.significance_test(xi, a)
             ).to eq true
         end
+        it '#difference_test' do
+           xi = [
+              [
+                  [3,35], [5,38], [3,39],
+              ],
+              [
+                  [3,36], [3,39], [8,54],
+              ],
+              [
+                  [2,40], [2,45], [2,39],
+              ],
+              [
+                  [3,47], [4,52], [2,48],
+              ],
+              [
+                  [1,64], [2,80], [0,70],
+              ],
+            ]
+            expect(
+               ancova.difference_test(xi, a)
+            ).to eq true
+        end
     end    
 end
 
