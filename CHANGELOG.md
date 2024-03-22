@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.11] - 2024-03-21
+
+### add
+- add fuction of difference_test.
+
 ## [0.0.10] - 2024-03-05
 
 ### add
