@@ -17,6 +17,12 @@ public class Ancova {
         double statistic = hypoth.calcTestStatistic(xi);
         return hypoth.executeTest(statistic, a);
     }
+    public boolean differenceTest(double[][][] xi, double a) {
+        HypothesisTest hypoth = new DifferenceTest();
+
+        double statistic = hypoth.calcTestStatistic(xi);
+        return hypoth.executeTest(statistic, a);
+    }
     /*********************************/
     /* interface define              */
     /*********************************/
@@ -36,34 +42,54 @@ public class Ancova {
             }
             return sum;
         }
-        protected double calcSex(double[][][] xi, int sumn) {
-            double sumx2 = calcSumx2(xi);
-            double sumx = calcSumx(xi);
-
-            double sumtx = sumx2 - sumx*sumx / sumn;
-            double sumax = calcSumax(xi) - sumx*sumx / sumn;
-
-            return sumtx - sumax;
-        }
-        protected double calcSey(double[][][] xi, int sumn) {
+        // 全変動
+        private double calcSty(double[][][] xi, int sumn) {
             double sumy2 = calcSumy2(xi);
             double sumy = calcSumy(xi);
 
-            double sumay = calcSumay(xi) - sumy*sumy / sumn;
-            double sumty = sumy2 - sumy*sumy / sumn;
-
-            return sumty - sumay;
+            return sumy2 - sumy*sumy / sumn;
         }
-        protected double calcSeyx(double[][][] xi, int sumn) {
+        private double calcStx(double[][][] xi, int sumn) {
+            double sumx2 = calcSumx2(xi);
+            double sumx = calcSumx(xi);
+
+            return sumx2 - sumx*sumx / sumn;
+        }
+        private double calcStyx(double[][][] xi, int sumn) {
             double sumx = calcSumx(xi);
             double sumy = calcSumy(xi);
             double sumyx = calcSumyx(xi);
 
-            double sumayx = calcSumayx(xi) - sumy*sumx / sumn;
-            double sumtyx = sumyx - sumy*sumx / sumn;
-
-            return sumtyx - sumayx;
+            return sumyx - sumy*sumx / sumn;
         }
+        // 水準間変動
+        private double calcSay(double[][][] xi, int sumn) {
+            double sumy = calcSumy(xi);
+
+            return calcSumay(xi) - sumy*sumy / sumn;
+        }
+        private double calcSax(double[][][] xi, int sumn) {
+            double sumx = calcSumx(xi);
+
+            return calcSumax(xi) - sumx*sumx / sumn;
+        }
+        private double calcSayx(double[][][] xi, int sumn) {
+            double sumx = calcSumx(xi);
+            double sumy = calcSumy(xi);
+
+            return calcSumayx(xi) - sumy*sumx / sumn;
+        }
+        // 水準内変動
+        protected double calcSex(double[][][] xi, int sumn) {
+            return calcStx(xi, sumn) - calcSax(xi, sumn);
+        }
+        protected double calcSey(double[][][] xi, int sumn) {
+            return calcSty(xi, sumn) - calcSay(xi, sumn);
+        }
+        protected double calcSeyx(double[][][] xi, int sumn) {
+            return calcStyx(xi, sumn) - calcSayx(xi, sumn);
+        }
+
         // 平行性の検定
         protected double calcbx(double[][][] xi) {
             double sum = 0.0;
@@ -89,8 +115,20 @@ public class Ancova {
             }
             return sum;
         }
+        // 差の検定
+        protected double calcSa(double[][][] xi, int sumn) {
+            double sumty = calcSty(xi, sumn);
+            double sumtyx = calcStyx(xi, sumn);
+            double sumtx  = calcStx(xi, sumn);
+            double sumey  = calcSey(xi, sumn);
+            double sumeyx = calcSeyx(xi, sumn);
+            double sumex  = calcSex(xi, sumn);
 
+            return (sumty - sumtyx * sumtyx / sumtx)
+                 - (sumey - sumeyx * sumeyx / sumex);
+        }
 
+        // ETC
         private double calcSumay(double[][][] xi) {
             double sum = 0.0;
 
@@ -157,7 +195,6 @@ public class Ancova {
             }
             return sum;
         }
-        // 水準間変動
         private double calcSumax(double[][][] xi) {
             double sum = 0.0;
 
@@ -180,6 +217,7 @@ public class Ancova {
             }
             return sum;
         }
+
     }
     // 回帰直線モデルの平行性の検定
     private class Parallettest extends RegressionLine implements HypothesisTest {
@@ -232,6 +270,7 @@ public class Ancova {
 
             double vr = calcVr(xi, sumn);
             double ve = calcVe(xi, sumn);
+
             return vr / ve;
         }
         public boolean executeTest(double statistic, double a) {
@@ -245,6 +284,34 @@ public class Ancova {
             double sumex = calcSex(xi, sumn);
 
             return (sumeyx * sumeyx) / sumex;
+        }
+        private double calcVe(double[][][] xi, int sumn) {
+            double sumey = calcSey(xi, sumn);
+            double sumex = calcSex(xi, sumn);
+            double sumeyx = calcSeyx(xi, sumn);
+
+            return (sumey * sumex - sumeyx * sumeyx) / (m * sumex);
+        }
+    }
+    // 水準間の差の検定
+    private class DifferenceTest extends RegressionLine implements HypothesisTest {
+        private int n = 0;
+        private int m = 0;
+        public double calcTestStatistic(double[][][] xi) {
+            int sumn = calcSumn(xi);
+            n = xi.length - 1;
+            m = sumn - xi.length - 1;
+
+            double va = calcSa(xi, sumn) / n;
+            double ve = calcVe(xi, sumn);
+
+            return va / ve;
+        }
+        public boolean executeTest(double statistic, double a) {
+            FDistribution fDist = new FDistribution(n, m);
+            double f = fDist.inverseCumulativeProbability(1.0 - a);
+
+            return (statistic >= f) ? true : false;
         }
         private double calcVe(double[][][] xi, int sumn) {
             double sumey = calcSey(xi, sumn);
