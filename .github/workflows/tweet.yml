@@ -22,6 +22,7 @@ jobs:
         pip install tweepy
     - name: Tweet on Push
       env:
+        text: "New commit pushed! (${{ github.repository }})"
         TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
         TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
         TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN_KEY }}
