@@ -1,4 +1,5 @@
 import org.apache.commons.math3.distribution.FDistribution;
+import org.apache.commons.math3.distribution.TDistribution;
 
 public class Ancova {
     private static Ancova ancova = new Ancova();
@@ -23,6 +24,11 @@ public class Ancova {
         double statistic = hypoth.calcTestStatistic(xi);
         return hypoth.executeTest(statistic, a);
     }
+    public Interval intervalEstim(double[][][] xi, double a) {
+        Estim estim = new IntervalEstim();
+
+        return estim.calcInterval(xi, a);
+    }
     /*********************************/
     /* interface define              */
     /*********************************/
@@ -30,9 +36,22 @@ public class Ancova {
         double calcTestStatistic(double[][][] xi);
         boolean executeTest(double statistic, double a);
     }
+    private interface Estim {
+        Interval calcInterval(double[][][] xi, double a);
+    }
     /*********************************/
     /* class define                  */
     /*********************************/
+    public class Interval {
+        private double min;
+        private double max;
+        public Interval(double min, double max) {
+            this.min = min;
+            this.max = max;
+        }
+        public double getMin() { return this.min; }
+        public double getMax() { return this.max; }
+    }
     private class RegressionLine {
         protected int calcSumn(double[][][] xi) {
             int sum = 0;
@@ -319,6 +338,89 @@ public class Ancova {
             double sumeyx = calcSeyx(xi, sumn);
 
             return (sumey * sumex - sumeyx * sumeyx) / (m * sumex);
+        }
+    }
+    //
+    private class IntervalEstim extends RegressionLine 
+                                implements Estim {
+        private int n = 0;
+        private int[] ni = null;
+        private double sumex = 0.0;
+        public Interval calcInterval(double[][][] xi, double a) {
+            ni = calcNi(xi);
+            int sumn = calcSumn(xi);
+            n = sumn - xi.length - 1;
+            sumex = calcSex(xi, sumn);
+            double ve = calcVe(xi, sumn);
+            double b = calcB(xi, sumn);
+
+            double[] meanyi = calcMeanyi(xi);
+            double[] meanxi = calcMeanxi(xi);
+            double meanx = calcMeanx(xi);
+
+            TDistribution tDist = new TDistribution(n);
+            double t = tDist.inverseCumulativeProbability(1.0 - a / 2.0);
+            double wk = (meanxi[0] - meanx);
+            double wk2 = t * Math.sqrt((1/ni[0] + wk * wk / sumex) * ve);
+            double min = meanyi[0] - b * wk - wk2;
+            double max = meanyi[0] - b * wk + wk2;
+
+            return new Interval(min, max);
+        }
+        private int[] calcNi(double[][][] xi) {
+            int[] ni = new int[xi.length];
+
+            for(int i = 0; i < xi.length; i++) {
+                ni[i] = xi[i].length;
+            }
+            return ni;
+        }
+        private double calcVe(double[][][] xi, int sumn) {
+            double sumey = calcSey(xi, sumn);
+            double sumeyx = calcSeyx(xi, sumn);
+
+            return (sumey * sumex - sumeyx * sumeyx) / (n * sumex);
+        }
+        private double calcB(double[][][] xi, int sumn) {
+            double sumeyx = calcSeyx(xi, sumn);
+            double sex = calcSex(xi, sumn);
+            
+            return sumeyx / sex;
+        }
+        private double[] calcMeanyi(double[][][] xi) {
+            double[] meanyi = new double[xi.length];
+
+            for(int i = 0; i < xi.length; i++) {
+                double sum = 0.0;
+                for(int j = 0; j < xi[i].length; j++) {
+                    sum += xi[i][j][0];
+                }
+                meanyi[i] = sum / xi[i].length;
+            }
+            return meanyi;
+        }
+        private double[] calcMeanxi(double[][][] xi) {
+            double[] meanxi = new double[xi.length];
+
+            for(int i = 0; i < xi.length; i++) {
+                double sum = 0.0;
+                for(int j = 0; j < xi[i].length; j++) {
+                    sum += xi[i][j][1];
+                }
+                meanxi[i] = sum / xi[i].length;
+            }
+            return meanxi;
+        }
+        private double calcMeanx(double[][][] xi) {
+            double sum = 0.0;
+            double n = 0;
+            for(int i = 0; i < xi.length; i++) {
+                for(int j = 0; j < xi[i].length; j++) {
+                    sum += xi[i][j][1];
+                    n++;
+                }
+            }
+            return sum / n;
         }
     }
 }
