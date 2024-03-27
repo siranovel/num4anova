@@ -314,6 +314,14 @@ module Num4AnovaLib
         def difference_test(xi, a)
             @ancova.differenceTest(xi.to_java(Java::double[][]), a)
         end
+        def interval_estim(xi, a)
+            retJava = @ancova.intervalEstim(xi.to_java(Java::double[][]), a)
+            retHash = {
+                "min": retJava.getMin(),
+                "max": retJava.getMax()
+            }
+            return retHash
+        end
     end
 end
 
