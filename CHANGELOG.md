@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.12] - 2024-03-27
+
+### add
+- add fuction of interval_estim.
+
 ## [0.0.11] - 2024-03-21
 
 ### add
