@@ -314,6 +314,42 @@ module Num4AnovaLib
         def difference_test(xi, a)
             @ancova.differenceTest(xi.to_java(Java::double[][]), a)
         end
+        # 区間推定
+        #
+        # @overload interval_estim(xi, a)
+        #   @param [array]  xi データ(double[][][])
+        #   @param [double] a  有意水準
+        #   @return [Hash]  (min:下限信頼区間 max:上限信頼区間)
+        # @example
+        #   xi = [
+        #      [
+        #          [3,35], [5,38], [3,39],
+        #      ],
+        #      [
+        #          [3,36], [3,39], [8,54],
+        #      ],
+        #      [
+        #          [2,40], [2,45], [2,39],
+        #      ],
+        #      [
+        #          [3,47], [4,52], [2,48],
+        #      ],
+        #      [
+        #          [1,64], [2,80], [0,70],
+        #      ],
+        #    ]
+        #    ancova = Num4AnovaLib::Num4AncovaLib.new
+        #    ancova.interval_estim(xi, 0.05)
+        #    =>
+        #      {:min=>4.466605469341916, :max=>7.1909253948556096}
+        def interval_estim(xi, a)
+            retJava = @ancova.intervalEstim(xi.to_java(Java::double[][]), a)
+            retHash = {
+                "min": retJava.getMin(),
+                "max": retJava.getMax()
+            }
+            return retHash
+        end
     end
 end
 

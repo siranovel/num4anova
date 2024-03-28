@@ -5,6 +5,7 @@ CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
 CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
 ACCESS_KEY = os.environ.get("TWITTER_ACCESS_TOKEN")
 ACCESS_KEY_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
+tweet = os.environ.get("text")
 
 # オブジェクト作成
 client = tweepy.Client(
@@ -14,6 +15,5 @@ client = tweepy.Client(
     access_token_secret = ACCESS_KEY_SECRET)
 
 # ツィートする
-tweet = 'New commit pushed! num4anova'
 client.create_tweet(text=tweet)
 

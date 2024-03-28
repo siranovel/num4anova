@@ -212,6 +212,32 @@ RSpec.describe Num4AnovaLib do
                ancova.difference_test(xi, a)
             ).to eq true
         end
+        it '#interval_estim' do
+           xi = [
+              [
+                  [3,35], [5,38], [3,39],
+              ],
+              [
+                  [3,36], [3,39], [8,54],
+              ],
+              [
+                  [2,40], [2,45], [2,39],
+              ],
+              [
+                  [3,47], [4,52], [2,48],
+              ],
+              [
+                  [1,64], [2,80], [0,70],
+              ],
+            ]
+            res = {
+                    "min": 4.47,
+                    "max": 7.19
+                  }
+            expect(
+               ancova.interval_estim(xi, a)
+            ).to interval(res, 2)
+        end
     end    
 end
 
