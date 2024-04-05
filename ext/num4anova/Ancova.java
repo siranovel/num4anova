@@ -24,7 +24,7 @@ public class Ancova {
         double statistic = hypoth.calcTestStatistic(xi);
         return hypoth.executeTest(statistic, a);
     }
-    public Interval intervalEstim(double[][][] xi, double a) {
+    public Interval[] intervalEstim(double[][][] xi, double a) {
         Estim estim = new IntervalEstim();
 
         return estim.calcInterval(xi, a);
@@ -37,7 +37,7 @@ public class Ancova {
         boolean executeTest(double statistic, double a);
     }
     private interface Estim {
-        Interval calcInterval(double[][][] xi, double a);
+        Interval[] calcInterval(double[][][] xi, double a);
     }
     /*********************************/
     /* class define                  */
@@ -346,7 +346,8 @@ public class Ancova {
         private int n = 0;
         private int[] ni = null;
         private double sumex = 0.0;
-        public Interval calcInterval(double[][][] xi, double a) {
+        public Interval[] calcInterval(double[][][] xi, double a) {
+            Interval[] ret = new Interval[xi.length];
             ni = calcNi(xi);
             int sumn = calcSumn(xi);
             n = sumn - xi.length - 1;
@@ -360,12 +361,16 @@ public class Ancova {
 
             TDistribution tDist = new TDistribution(n);
             double t = tDist.inverseCumulativeProbability(1.0 - a / 2.0);
-            double wk = (meanxi[0] - meanx);
-            double wk2 = t * Math.sqrt((1/ni[0] + wk * wk / sumex) * ve);
-            double min = meanyi[0] - b * wk - wk2;
-            double max = meanyi[0] - b * wk + wk2;
+            for(int i = 0; i < ret.length; i++) {
+                double wk = (meanxi[i] - meanx);
+                double wk2 = t * Math.sqrt((1/ni[i] + wk * wk / sumex) * ve);
+                double min = meanyi[i] - b * wk - wk2;
+                double max = meanyi[i] - b * wk + wk2;
 
-            return new Interval(min, max);
+                ret[i] = new Interval(min, max);
+            }
+            
+            return ret;
         }
         private int[] calcNi(double[][][] xi) {
             int[] ni = new int[xi.length];
