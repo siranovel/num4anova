@@ -230,13 +230,16 @@ RSpec.describe Num4AnovaLib do
                   [1,64], [2,80], [0,70],
               ],
             ]
-            res = {
-                    "min": 4.47,
-                    "max": 7.19
-                  }
+            res = [
+                    { "min":  4.47, "max":  7.19 },
+                    { "min":  5.06, "max":  6.39 },
+                    { "min":  2.51, "max":  4.25 },
+                    { "min":  2.81, "max":  2.96 },
+                    { "min": -6.30, "max": -0.66 },
+                  ]
             expect(
                ancova.interval_estim(xi, a)
-            ).to interval(res, 2)
+            ).to intervals(res, 2)
         end
     end    
 end

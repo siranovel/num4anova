@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.13] - 2024-04-04
+
+### chg
+- chg fuction of interval_estim.
+
 ## [0.0.12] - 2024-03-27
 
 ### add
