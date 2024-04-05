@@ -341,14 +341,24 @@ module Num4AnovaLib
         #    ancova = Num4AnovaLib::Num4AncovaLib.new
         #    ancova.interval_estim(xi, 0.05)
         #    =>
-        #      {:min=>4.466605469341916, :max=>7.1909253948556096}
+        #       {:min=>4.466605469341916,  :max=>7.1909253948556096}
+        #       {:min=>5.05699825110459,   :max=>6.386335082228742}
+        #       {:min=>2.510804295684195,  :max=>4.250430272217034}
+        #       {:min=>2.8089257316042135, :max=>2.9566298239513418}
+        #       {:min=>-6.303283147572267, :max=>-0.6577045067487104}
         def interval_estim(xi, a)
+            retRb = []
             retJava = @ancova.intervalEstim(xi.to_java(Java::double[][]), a)
-            retHash = {
-                "min": retJava.getMin(),
-                "max": retJava.getMax()
-            }
-            return retHash
+            sz = retJava.size
+            sz.times do |i|
+                retRb.push(
+                  {
+                    "min": retJava[i].getMin(),
+                    "max": retJava[i].getMax()
+                  }
+                )
+            end
+            return retRb
         end
     end
 end
