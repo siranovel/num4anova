@@ -344,5 +344,27 @@ RSpec.describe MultiCompLib do
             ).to is_array(res)
         end
     end
+    describe MultiCompLib::NonParametrixTestLib do
+        let!(:nonParaTest) { MultiCompLib::NonParametrixTestLib.new }
+        it '#bonferrono_test' do
+            xi = [
+                [12.2, 18.8, 18.2],
+                [22.2, 20.5, 14.6],
+                [20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3],
+                [24.5, 21.2, 22.4],
+            ]
+            res = [
+                [false, false, true,  true,  true],
+                [false, false, false, true,  true],
+                [false, false, false, true,  false],
+                [false, false, false, false, true],
+                [false, false, false, false, false],
+            ]
+            expect(
+                nonParaTest.bonferrono_test(xi, a)
+            ).to is_array(res)
+        end
+    end
 end
 
