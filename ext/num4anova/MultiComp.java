@@ -3,9 +3,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 
 import org.apache.commons.math3.util.Combinations;
 public class MultiComp {
+    /*********************************/
+    /* interface define              */
+    /*********************************/
+    private interface HypothesisTest {
+        double[][] calcTestStatistic(double[][] xi);
+        boolean[][] executeTest(double[][] statistic, double a);
+    }
     public static class ParametrixTest {
         private static ParametrixTest paramTest = new ParametrixTest();
         public static ParametrixTest getInstance() {
@@ -44,13 +52,6 @@ public class MultiComp {
             double[][] statistic = hypoth.calcTestStatistic(xi);
 
             return hypoth.executeTest(statistic, a);
-        }
-        /*********************************/
-        /* interface define              */
-        /*********************************/
-        private interface HypothesisTest {
-            double[][] calcTestStatistic(double[][] xi);
-            boolean[][] executeTest(double[][] statistic, double a);
         }
         /*********************************/
         /* Class define                  */
@@ -365,6 +366,56 @@ public class MultiComp {
                 return ret;
             }
         }
+    }
+    public static class NonParametrixTest {
+        private static NonParametrixTest nonParamTest = new NonParametrixTest();
+        public static NonParametrixTest getInstance() {
+            return nonParamTest;
+        }
+        public boolean[][] bonferronoTest(double[][] xi, double a) {
+            HypothesisTest hypoth = new BonferroniTest();
+
+            double[][] statistic = hypoth.calcTestStatistic(xi);
+            return hypoth.executeTest(statistic, a * 0.5);
+        }
+        /*********************************/
+        /* Class define                  */
+        /*********************************/
+        // ボンフェロー法
+        private class BonferroniTest implements HypothesisTest {
+            private int n = 0;
+            private int k = 0;
+            public double[][] calcTestStatistic(double[][] xi) {
+                n = xi.length;
+                double[][] statistic = new double[n][n];
+                //
+                Combinations c = new Combinations(n, 2);
+                List<int[]> al = new ArrayList<>();
+                for(int[] iterate : c) {
+                    al.add(iterate);
+                }
+                k = al.size();
+                //
+                MannWhitneyUTest utest = new MannWhitneyUTest();
+                for(int[] array : al) {
+                    int i = array[0];
+                    int j = array[1];
+
+                    statistic[i][j] = utest.mannWhitneyUTest(xi[i], xi[j]);
+                }
+                return statistic;
+            }
+            public boolean[][] executeTest(double[][] statistic, double a) {
+                boolean[][] ret = new boolean[n][n];
+
+                for(int i = 0; i < n; i++) {
+                    for(int j = i+1; j < n; j++) {
+                        ret[i][j] = (statistic[i][j] < a * k) ? true : false;
+                    }
+                }
+                return ret;
+            }
+        }        
     }
 }
 
