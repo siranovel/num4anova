@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.14] - 2024-04-08
+
+### add
+- add fuction of bonferrono_test in NonParametrixTestLib.
+
 ## [0.0.13] - 2024-04-04
 
 ### chg
