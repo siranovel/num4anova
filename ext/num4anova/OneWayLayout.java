@@ -30,6 +30,11 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.commons.math3.distribution.FDistribution;
 import java.util.Map;
+
+import org.apache.commons.math3.stat.ranking.NaNStrategy;
+import org.apache.commons.math3.stat.ranking.NaturalRanking;
+import org.apache.commons.math3.stat.ranking.TiesStrategy;
+import java.util.stream.IntStream;
 public class OneWayLayout {
     private static OneWayLayout oneWay = new OneWayLayout();
     public static OneWayLayout getInstance() {
@@ -68,6 +73,12 @@ public class OneWayLayout {
     }
     public boolean replicateTest(double[][] xi, double a) {
         OneWayAnovaTest oneway = new ReplicateTest();
+
+        double statistic = oneway.calcTestStatistic(xi);
+        return oneway.execute_test(statistic, a);
+    }
+    public boolean kruskalWallisTest(double[][] xi, double a) {
+        OneWayAnovaTest oneway = new KruskalWallisTest();
 
         double statistic = oneway.calcTestStatistic(xi);
         return oneway.execute_test(statistic, a);
@@ -380,5 +391,66 @@ public class OneWayLayout {
             return (statistic >= f) ? true : false;
         }
     }
-}
+    // クラスカル・ウォリス検定
+    private class KruskalWallisTest implements OneWayAnovaTest {
+        private NaturalRanking naturalRanking;
+        private int[] ni = null;
+        public KruskalWallisTest() {
+            naturalRanking = new NaturalRanking(NaNStrategy.FIXED, 
+                                                 TiesStrategy.AVERAGE);
+        }
+        public double calcTestStatistic(double[][] xi) {
+            double[] z = concatSample(xi);            // 全てのデータをつなぐ
+            double[] ranks = naturalRanking.rank(z);  // rankに順位値に変換
+            double[] sumRankXi = calcSumRankXi(ranks);
+            double kw = 0.0;
+            int n = z.length;
+
+            for(int i = 0; i < sumRankXi.length; i++) {
+                kw += sumRankXi[i] * sumRankXi[i] / ni[i];
+            }
+            return 12.0 / (n * (n + 1.0)) * kw - 3.0 * (n + 1.0);
+        }
+        public boolean execute_test(double statistic, double a) {
+            ChiSquaredDistribution chi2Dist = new ChiSquaredDistribution(ni.length - 1);
+            double r_val = chi2Dist.inverseCumulativeProbability(1.0 - a);
+
+            return (r_val < statistic) ? true : false;
+        }
+        private int[] calcNi(double[][] xi) {
+            int[] ni = new int[xi.length];
+
+            for(int i = 0; i < ni.length; i++) {
+                ni[i] = xi[i].length;
+            }
+            return ni;
+        }
+        private double[] concatSample(double[][] xi) {
+            DescriptiveStatistics stat = new DescriptiveStatistics();
+            ni = calcNi(xi);
+            Arrays.stream(ni).forEach(stat::addValue);
+            int n = Double.valueOf(stat.getSum()).intValue();
+
+            double[] z = new double[n];
+            int idx = 0;
+            for(int cnt = 0; cnt < xi.length; cnt++) {
+                System.arraycopy(xi[cnt], 0, z, idx, ni[cnt]);
+                idx += ni[cnt];
+            }
+            return z;
+        }
+        private double[] calcSumRankXi(double[] ranks) {
+            double[] sumRi = new double[ni.length];
+            int idx = 0;
+
+            for(int cnt = 0; cnt < ni.length; cnt++) {
+                sumRi[cnt] = IntStream.range(idx, idx + ni[cnt])
+                                    .mapToDouble(i -> ranks[i])
+                                    .sum();
+                idx += ni[cnt];
+            }
+            return sumRi;
+        }
+    }
+ }
 

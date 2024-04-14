@@ -151,6 +151,25 @@ module Num4AnovaLib
         def replicate_test(xi, a)
             return @oneWay.replicateTest(xi.to_java(Java::double[]), a)
         end
+        # クラスカル・ウォリスの検定
+        #
+        # @overload kruskalwallis_test(xi, a)
+        #   @param [array]  xi データ(double[][])
+        #   @param [double] a         有意水準
+        #   @return [boolean] 検定結果(true:棄却域内 false:棄却域外)
+        #   xi = [
+        #       [12.2, 18.8, 18.2],
+        #       [22.2, 20.5, 14.6],
+        #       [20.8, 19.5, 26.3],
+        #       [26.4, 32.5, 31.3],
+        #       [24.5, 21.2, 22.4],
+        #   ]
+        #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
+        #   oneWay.kruskalwallis_test(xi, 0.05)
+        #   => true
+        def kruskalwallis_test(xi, a)
+            return @oneWay.kruskalWallisTest(xi.to_java(Java::double[]), a)
+        end
     end
 
     # 二元配置の分散分析
