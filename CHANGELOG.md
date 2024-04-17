@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [0.0.16] - 2024-04-16
+
+### add
+- add fuction of bonferrono_test in friedman_test.
+
 ## [0.0.15] - 2024-04-13
 
 ### add

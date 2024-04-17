@@ -157,12 +157,11 @@ module Num4AnovaLib
         #   @param [array]  xi データ(double[][])
         #   @param [double] a         有意水準
         #   @return [boolean] 検定結果(true:棄却域内 false:棄却域外)
+        # @example
         #   xi = [
-        #       [12.2, 18.8, 18.2],
-        #       [22.2, 20.5, 14.6],
-        #       [20.8, 19.5, 26.3],
-        #       [26.4, 32.5, 31.3],
-        #       [24.5, 21.2, 22.4],
+        #        [12.2, 18.8, 18.2],
+        #        [22.2, 20.5, 14.6, 20.8, 19.5, 26.3],
+        #        [26.4, 32.5, 31.3, 24.5, 21.2, 22.4],
         #   ]
         #   oneWay = Num4AnovaLib::OneWayLayoutLib.new 
         #   oneWay.kruskalwallis_test(xi, 0.05)
@@ -236,6 +235,27 @@ module Num4AnovaLib
         def twoway2_anova(xij, a)
             ret = @twoWay.twoway2Anova(xij.to_java(Java::double[]), a)
             return ret.to_a
+        end
+        # フリードマン検定
+        #
+        # @overload friedman_test(xij, a)
+        #   @param [array]  xij データ(double[][])
+        #   @param [double] a         有意水準
+        #   @return [boolean] 検定結果(boolean true:棄却域内 false:棄却域外)
+        # @example
+        #   xij = [
+        #       [13.6, 15.6, 9.2],
+        #       [22.3, 23.3, 13.3],
+        #       [26.7, 28.8, 15.0],
+        #       [28.0, 31.2, 15.8],
+        #   ]
+        #   twoWay = Num4AnovaLib::TwoWayLayoutLib.new 
+        #   twoWay.friedman_test(xij, 0.05)
+        #   =>
+        #     true
+        def friedman_test(xij, a)
+            ret = @twoWay.friedmanTest(xij.to_java(Java::double[]), a)
+            return ret
         end        
     end
     # 共分散分析
