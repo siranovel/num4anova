@@ -79,10 +79,8 @@ RSpec.describe Num4AnovaLib do
         it '#kruskalwallis_test' do
             xi = [
                 [12.2, 18.8, 18.2],
-                [22.2, 20.5, 14.6],
-                [20.8, 19.5, 26.3],
-                [26.4, 32.5, 31.3],
-                [24.5, 21.2, 22.4],
+                [22.2, 20.5, 14.6, 20.8, 19.5, 26.3],
+                [26.4, 32.5, 31.3, 24.5, 21.2, 22.4],
             ]
             expect(
                 oneWay.kruskalwallis_test(xi, a)
@@ -155,6 +153,17 @@ RSpec.describe Num4AnovaLib do
             expect(
                 twoWay.twoway2_anova(xij, a)
             ).to is_array(res)
+        end
+        it '#friedman_test' do
+            xij = [
+                [13.6, 15.6, 9.2],
+                [22.3, 23.3, 13.3],
+                [26.7, 28.8, 15.0],
+                [28.0, 31.2, 15.8],
+            ]
+            expect(
+                twoWay.friedman_test(xij, a)
+            ).to eq true
         end
     end
     describe Num4AnovaLib::Num4AncovaLib do
