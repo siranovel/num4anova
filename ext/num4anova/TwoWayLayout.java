@@ -1,6 +1,11 @@
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.distribution.FDistribution;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import java.util.Arrays;
+
+import org.apache.commons.math3.stat.ranking.NaNStrategy;
+import org.apache.commons.math3.stat.ranking.NaturalRanking;
+import org.apache.commons.math3.stat.ranking.TiesStrategy;
 public class TwoWayLayout {
     private static TwoWayLayout twoWay = new TwoWayLayout();
     public static TwoWayLayout getInstance() {
@@ -18,16 +23,26 @@ public class TwoWayLayout {
         double[] statistic = twoway.calcTestStatistic(xij);
         return twoway.execute_test(statistic, a);
     }
+    public boolean friedmanTest(double[][] xij, double a) {
+        OneWayAnovaTest twoway = new FriedmanTest();
+
+        double statistic = twoway.calcTestStatistic(xij);
+        return twoway.execute_test(statistic, a);
+    }
     /*********************************/
     /* interface define              */
     /*********************************/
     private interface TwoWayAnovaTest {
         double[] calcTestStatistic(double[][][] xij);
-        boolean[] execute_test(double statistic[], double a);
+        boolean[] execute_test(double[] statistic, double a);
     }
     private interface TwoWay2AnovaTest {
         double[] calcTestStatistic(double[][] xij);
-        boolean[] execute_test(double statistic[], double a);
+        boolean[] execute_test(double[] statistic, double a);
+    }
+    private interface OneWayAnovaTest {
+        double calcTestStatistic(double[][] xi);
+        boolean execute_test(double statistic, double a);
     }
     /*********************************/
     /* class define                  */
@@ -162,7 +177,7 @@ public class TwoWayLayout {
             }
             return sumDrift;
         }
-        public boolean[] execute_test(double statistic[], double a) {
+        public boolean[] execute_test(double[] statistic, double a) {
             boolean[] ret = new boolean[3];
 
             ret[0] = evaluation(new FDistribution(an, en), statistic[0], a);
@@ -269,7 +284,7 @@ public class TwoWayLayout {
             return sumDrift;
         }
 
-        public boolean[] execute_test(double statistic[], double a) {
+        public boolean[] execute_test(double[] statistic, double a) {
             boolean[] ret = new boolean[2];
 
             ret[0] = evaluation(new FDistribution(an, en), statistic[0], a);
@@ -280,6 +295,65 @@ public class TwoWayLayout {
             double r_val = fDist.inverseCumulativeProbability(1.0 - a);
 
             return (statistic >= r_val) ? true : false;
+        }
+    }
+    // フリードマンの検定
+    private class FriedmanTest implements  OneWayAnovaTest{
+        private NaturalRanking naturalRanking;
+        private int n = 0;
+        private int k = 0;
+        public FriedmanTest()  {
+            naturalRanking = new NaturalRanking(NaNStrategy.FIXED, 
+                                                 TiesStrategy.AVERAGE);
+        }
+        public double calcTestStatistic(double[][] xij) {
+            n = xij[0].length;
+            k = xij.length;
+            double[][] z = concatSample(xij);
+            double[][] ranks = calcRankij(z);
+            double[] sumRankXi = calcSumRankXi(ranks);
+            double kw = 0.0;
+
+            for(int i = 0; i < sumRankXi.length; i++) {
+                kw += sumRankXi[i] * sumRankXi[i];
+            }
+            return 12.0 / (n * k * (k + 1.0)) * kw - 3.0 * n * (k + 1.0);
+        }
+        public boolean execute_test(double statistic, double a) {
+            ChiSquaredDistribution chi2Dist = new ChiSquaredDistribution(k - 1);
+
+            double r_val = chi2Dist.inverseCumulativeProbability(1.0 - a);
+
+            return (r_val < statistic) ? true : false;
+        }
+        private double[][] concatSample(double[][] xi) {
+            double[][] z = new double[n][k];
+
+            for(int i = 0; i < k; i++) {
+                for(int j = 0; j < n; j++) {
+                    z[j][i] = xi[i][j];
+                }
+            }
+            return z;
+        }
+        private double[][] calcRankij(double[][] z) {
+            double[][] ranks = new double[n][k];
+
+            for(int i = 0; i < n; i++) {
+                ranks[i] = naturalRanking.rank(z[i]);
+            }
+            return ranks;
+        }
+        private double[] calcSumRankXi(double[][] ranks) {
+            double[] sumRi = new double[k];
+
+            for(int i = 0; i < k; i++) {
+                sumRi[i] = 0.0;
+                for(int j = 0; j < n; j++) {
+                    sumRi[i] += ranks[j][i];
+                }
+            }
+            return sumRi;
         }
     }
 }
