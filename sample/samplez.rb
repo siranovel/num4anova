@@ -1,5 +1,5 @@
 require 'num4anova'
-require 'multicomp'
+require 'num4multicomp'
 require_relative('mymatcher')
 
 RSpec.describe Num4AnovaLib do
@@ -266,10 +266,10 @@ RSpec.describe Num4AnovaLib do
     end    
 end
 
-RSpec.describe MultiCompLib do
+RSpec.describe Num4MultiCompLib do
     let!(:a) { 0.05 }
-    describe MultiCompLib::ParametrixTestLib do
-        let!(:paraTest) { MultiCompLib::ParametrixTestLib.new }
+    describe Num4MultiCompLib::ParametrixTestLib do
+        let!(:paraTest) { Num4MultiCompLib::ParametrixTestLib.new }
         it '#turkey_test' do
             xi = [
                 [12.2, 18.8, 18.2],
@@ -366,8 +366,8 @@ RSpec.describe MultiCompLib do
             ).to is_array(res)
         end
     end
-    describe MultiCompLib::NonParametrixTestLib do
-        let!(:nonParaTest) { MultiCompLib::NonParametrixTestLib.new }
+    describe Num4MultiCompLib::NonParametrixTestLib do
+        let!(:nonParaTest) { Num4MultiCompLib::NonParametrixTestLib.new }
         it '#bonferrono_test' do
             xi = [
                 [12.2, 18.8, 18.2],

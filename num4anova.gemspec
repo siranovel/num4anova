@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
   s.name          = 'num4anova'
-  s.version       = '0.0.16'
-  s.date          = '2024-04-16'
+  s.version       = '0.1.1'
+  s.date          = '2024-05-15'
   s.summary       = "num for variance analysis"
   s.description   = "numerical solution for analysis of variance."
   s.platform      = 'java'
   s.authors       = ["siranovel"]
   s.email         = "siranovel@gmail.com"
-  s.homepage      = "http://github.com/siranovel/num4varanly"
+  s.homepage      = "http://github.com/siranovel/num4anova"
   s.license       = "MIT"
   s.files         = ["LICENSE", "Gemfile", "CHANGELOG.md"]
   s.files         += Dir.glob("{lib,ext}/**/*")

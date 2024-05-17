@@ -8,7 +8,7 @@ require_relative('dunnet')
 java_import 'MultiComp'
 # 多重比較を行う
 #  (Apache commoms math3使用)
-module MultiCompLib
+module Num4MultiCompLib
     # パラメトリック検定
     class ParametrixTestLib
         include DunnetTestLib

@@ -2,15 +2,19 @@
 
 ## Unreleased
 
+## [0.1.1] - 2024-05-15
+### change
+- chg module name to Num4MultiCompLib from MultiCompLib
+
 ## [0.0.16] - 2024-04-16
 
 ### add
-- add fuction of friedman_test.
+- add fuction of bonferrono_test in friedman_test.
 
 ## [0.0.15] - 2024-04-13
 
 ### add
-- add fuction of kruskalwallis_test.
+- add fuction of bonferrono_test in kruskalwallis_test.
 
 ## [0.0.14] - 2024-04-08
 
