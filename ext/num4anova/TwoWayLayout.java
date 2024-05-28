@@ -29,6 +29,11 @@ public class TwoWayLayout {
         double statistic = twoway.calcTestStatistic(xij);
         return twoway.execute_test(statistic, a);
     }
+    public double[][] createOneWay(double[][][] xij){
+        CreateOneWay twoway = new CreateOneWay();
+
+        return twoway.cnvOneWay(xij);
+    }
     /*********************************/
     /* interface define              */
     /*********************************/
@@ -354,6 +359,24 @@ public class TwoWayLayout {
                 }
             }
             return sumRi;
+        }
+    }
+    // 1元配置用データ作成
+    private class CreateOneWay {
+        public double[][] cnvOneWay(double[][][] xij) {
+            int a = xij.length;
+            int b = xij[0].length;
+            double[][] meanXij = new double[a][b];
+            DescriptiveStatistics stat = new DescriptiveStatistics();
+
+            for(int i = 0; i < a; i++) {
+                for(int j = 0; j < b; j++) {
+                    Arrays.stream(xij[i][j]).forEach(stat::addValue);
+                    meanXij[i][j] = stat.getMean();
+                    stat.clear();
+                }
+            }            
+            return meanXij;                        
         }
     }
 }
