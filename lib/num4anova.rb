@@ -256,6 +256,46 @@ module Num4AnovaLib
         def friedman_test(xij, a)
             ret = @twoWay.friedmanTest(xij.to_java(Java::double[]), a)
             return ret
+        end
+        # 1元配置用データ作成
+        #
+        # @overload create_oneway(xij)
+        #   @param  [array]  xij データ(double[][][])
+        #   @return [array]  3次元データを2次元データに変換した値
+        # @example
+        #   xij = [
+        #           [
+        #             [13.2, 15.7, 11.9],
+        #             [16.1, 15.7, 15.1],
+        #             [9.1,  10.3,  8.2],
+        #           ],
+        #           [
+        #             [22.8, 25.7, 18.5],
+        #             [24.5, 21.2, 24.2],
+        #             [11.9, 14.3, 13.7],
+        #           ],
+        #           [
+        #             [21.8, 26.3, 32.1],
+        #             [26.9, 31.3, 28.3],
+        #             [15.1, 13.6, 16.2],
+        #           ],
+        #           [
+        #             [25.7, 28.8, 29.5],
+        #             [30.1, 33.8, 29.6],
+        #             [15.2, 17.3, 14.8],
+        #           ],
+        #   ]
+        #   twoWay = Num4AnovaLib::TwoWayLayoutLib.new 
+        #   twoWay.create_oneway(xij)
+        #   =>
+        #     xij = [
+        #       [13.6, 15.6, 9.2],
+        #       [22.3, 23.3, 13.3],
+        #       [26.7, 28.8, 15.0],
+        #       [28.0, 31.2, 15.8],
+        #     ]
+        def create_oneway(xij)
+            return @twoWay.createOneWay(xij.to_java(Java::double[][]))
         end        
     end
     # 共分散分析
