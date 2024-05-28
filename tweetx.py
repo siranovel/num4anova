@@ -15,5 +15,5 @@ client = tweepy.Client(
     access_token_secret = ACCESS_KEY_SECRET)
 
 # ツィートする
-client.create_tweet(text=tweet)
-
+res = client.create_tweet(text=tweet)
+print(res)
