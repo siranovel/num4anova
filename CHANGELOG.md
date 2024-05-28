@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [0.1.2] - 2024-05-27
+### add
+- add function of create_oneway in TwoWayLayoutLib.
+
 ## [0.1.1] - 2024-05-15
 ### change
 - chg module name to Num4MultiCompLib from MultiCompLib
