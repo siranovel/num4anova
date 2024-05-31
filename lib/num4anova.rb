@@ -295,7 +295,8 @@ module Num4AnovaLib
         #       [28.0, 31.2, 15.8],
         #     ]
         def create_oneway(xij)
-            return @twoWay.createOneWay(xij.to_java(Java::double[][]))
+            ret = @twoWay.createOneWay(xij.to_java(Java::double[][]))
+            return ret.to_a
         end        
     end
     # 共分散分析
