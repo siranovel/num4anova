@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [0.1.3] - 2024-05-28
+### chg
+- chg to_a in create_oneway.
+
 ## [0.1.2] - 2024-05-27
 ### add
 - add function of create_oneway in TwoWayLayoutLib.
