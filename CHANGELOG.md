@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [0.2.1] - 2024-06-17
+### chg
+- chg Num4AncovaLib.
+
 ## [0.1.3] - 2024-05-28
 ### chg
 - chg to_a in create_oneway.

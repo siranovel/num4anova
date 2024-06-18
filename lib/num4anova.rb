@@ -306,129 +306,121 @@ module Num4AnovaLib
         end
         # 回帰直線の平行性検定
         #
-        # @overload parallel_test(xi, a)
-        #   @param [array]  xi データ(double[][][])
+        # @overload parallel_test(yi, xi, a)
+        #   @param [array]  yi データ(double[][])
+        #   @param [array]  xi データ(double[][])
         #   @param [double] a  有意水準
         #   @return [boolean]  検定結果(boolean true:棄却域内 false:棄却域外)
         # @example
+        #   yi = [
+        #       [3, 5, 3],
+        #       [3, 3, 8],
+        #       [2, 2, 2],
+        #       [3, 4, 2],
+        #       [1, 2, 0],
+        #   ]
         #   xi = [
-        #      [
-        #          [3,35], [5,38], [3,39],
-        #      ],
-        #      [
-        #          [3,36], [3,39], [8,54],
-        #      ],
-        #      [
-        #          [2,40], [2,45], [2,39],
-        #      ],
-        #      [
-        #          [3,47], [4,52], [2,48],
-        #      ],
-        #      [
-        #          [1,64], [2,80], [0,70],
-        #      ],
+        #      [35, 38, 39],
+        #      [36, 39, 54],
+        #      [40, 45, 39],
+        #      [47, 52, 48],
+        #      [64, 80, 70],
         #    ]
         #    ancova = Num4AnovaLib::Num4AncovaLib.new
-        #    ancova.parallel_test(xi, 0.05)
+        #    ancova.parallel_test(yi, xi, 0.05)
         #    => false
-        def parallel_test(xi, a)
-            @ancova.parallelTest(xi.to_java(Java::double[][]), a)
+        def parallel_test(yi, xi, a)
+            @ancova.parallelTest(yi.to_java(Java::double[]), xi.to_java(Java::double[]), a)
         end
         # 回帰直線の有意性検定
         #
-        # @overload significance_test(xi, a)
-        #   @param [array]  xi データ(double[][][])
+        # @overload significance_test(yi, xi, a)
+        #   @param [array]  yi データ(double[][])
+        #   @param [array]  xi データ(double[][])
         #   @param [double] a  有意水準
         #   @return [boolean]  検定結果(boolean true:棄却域内 false:棄却域外)
         # @example
+        #   yi = [
+        #       [3, 5, 3],
+        #       [3, 3, 8],
+        #       [2, 2, 2],
+        #       [3, 4, 2],
+        #       [1, 2, 0],
+        #   ]
         #   xi = [
-        #      [
-        #          [3,35], [5,38], [3,39],
-        #      ],
-        #      [
-        #          [3,36], [3,39], [8,54],
-        #      ],
-        #      [
-        #          [2,40], [2,45], [2,39],
-        #      ],
-        #      [
-        #          [3,47], [4,52], [2,48],
-        #      ],
-        #      [
-        #          [1,64], [2,80], [0,70],
-        #      ],
+        #      [35, 38, 39],
+        #      [36, 39, 54],
+        #      [40, 45, 39],
+        #      [47, 52, 48],
+        #      [64, 80, 70],
         #    ]
         #    ancova = Num4AnovaLib::Num4AncovaLib.new
-        #    ancova.significance_test(xi, 0.05)
+        #    ancova.significance_test(yi, xi, 0.05)
         #    => true
-        def significance_test(xi, a)
-            @ancova.significanceTest(xi.to_java(Java::double[][]), a)
+        def significance_test(yi, xi, a)
+            @ancova.significanceTest(yi.to_java(Java::double[]), xi.to_java(Java::double[]), a)
         end
         # 水準間の差の検定
         #
-        # @overload difference_test(xi, a)
-        #   @param [array]  xi データ(double[][][])
+        # @overload difference_test(yi, xi, a)
+        #   @param [array]  yi データ(double[][])
+        #   @param [array]  xi データ(double[][])
         #   @param [double] a  有意水準
         #   @return [boolean]  検定結果(boolean true:棄却域内 false:棄却域外)
         # @example
+        #   yi = [
+        #       [3, 5, 3],
+        #       [3, 3, 8],
+        #       [2, 2, 2],
+        #       [3, 4, 2],
+        #       [1, 2, 0],
+        #   ]
         #   xi = [
-        #      [
-        #          [3,35], [5,38], [3,39],
-        #      ],
-        #      [
-        #          [3,36], [3,39], [8,54],
-        #      ],
-        #      [
-        #          [2,40], [2,45], [2,39],
-        #      ],
-        #      [
-        #          [3,47], [4,52], [2,48],
-        #      ],
-        #      [
-        #          [1,64], [2,80], [0,70],
-        #      ],
+        #      [35, 38, 39],
+        #      [36, 39, 54],
+        #      [40, 45, 39],
+        #      [47, 52, 48],
+        #      [64, 80, 70],
         #    ]
         #    ancova = Num4AnovaLib::Num4AncovaLib.new
-        #    ancova.difference_test(xi, 0.05)
+        #    ancova.difference_test(yi, xi, 0.05)
         #    => true
-        def difference_test(xi, a)
-            @ancova.differenceTest(xi.to_java(Java::double[][]), a)
+        def difference_test(yi, xi, a)
+            @ancova.differenceTest(yi.to_java(Java::double[]), xi.to_java(Java::double[]), a)
         end
         # 区間推定
         #
-        # @overload interval_estim(xi, a)
-        #   @param [array]  xi データ(double[][][])
+        # @overload interval_estim(yi, xi, a)
+        #   @param [array]  yi データ(double[][])
+        #   @param [array]  xi データ(double[][])
         #   @param [double] a  有意水準
         #   @return [Hash]  (min:下限信頼区間 max:上限信頼区間)
         # @example
+        #   yi = [
+        #       [3, 5, 3],
+        #       [3, 3, 8],
+        #       [2, 2, 2],
+        #       [3, 4, 2],
+        #       [1, 2, 0],
+        #   ]
         #   xi = [
-        #      [
-        #          [3,35], [5,38], [3,39],
-        #      ],
-        #      [
-        #          [3,36], [3,39], [8,54],
-        #      ],
-        #      [
-        #          [2,40], [2,45], [2,39],
-        #      ],
-        #      [
-        #          [3,47], [4,52], [2,48],
-        #      ],
-        #      [
-        #          [1,64], [2,80], [0,70],
-        #      ],
+        #      [35, 38, 39],
+        #      [36, 39, 54],
+        #      [40, 45, 39],
+        #      [47, 52, 48],
+        #      [64, 80, 70],
         #    ]
         #    ancova = Num4AnovaLib::Num4AncovaLib.new
-        #    ancova.interval_estim(xi, 0.05)
+        #    ancova.interval_estim(yi, xi, 0.05)
         #    =>
         #       {:min=>4.466605469341916,  :max=>7.1909253948556096}
         #       {:min=>5.05699825110459,   :max=>6.386335082228742}
         #       {:min=>2.510804295684195,  :max=>4.250430272217034}
         #       {:min=>2.8089257316042135, :max=>2.9566298239513418}
         #       {:min=>-6.303283147572267, :max=>-0.6577045067487104}
-        def interval_estim(xi, a)
+        def interval_estim(yi, xi, a)
             retRb = []
-            retJava = @ancova.intervalEstim(xi.to_java(Java::double[][]), a)
+            retJava = @ancova.intervalEstim(yi.to_java(Java::double[]), xi.to_java(Java::double[]), a)
             sz = retJava.size
             sz.times do |i|
                 retRb.push(
