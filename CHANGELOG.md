@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [0.3.1] - 2025-05-15
+### add
+- add required_ruby_version in gemspec file.
+
 ## [0.2.1] - 2024-06-17
 ### chg
 - chg Num4AncovaLib.
